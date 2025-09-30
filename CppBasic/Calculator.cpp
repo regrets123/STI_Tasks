@@ -30,7 +30,7 @@ int Calculator::GetValidNumber(std::string prompt)
     int num;
     while (true)
     {
-        std::cout << prompt << " ";
+        std::cout << prompt << "\n";
         std::cin >> num;
 
         if (std::cin.fail())
@@ -122,6 +122,10 @@ void Calculator::ExecuteState(CalcState state)
             ExeDivision(toCalculate);
             break;
         }
-    default: break;
+    default:
+        {
+            std::cout <<  "Invalid input: Enter a number between 1 and 5." << '\n';
+            break;   
+        }
     }
 }
