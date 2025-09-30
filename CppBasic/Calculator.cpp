@@ -82,8 +82,15 @@ void Calculator::ExeMultiplication(std::array<int, 2> numbers)
 void Calculator::ExeDivision(std::array<int, 2> numbers)
 {
     int sum;
-    sum = numbers[0] / numbers[1];
-    std::cout << "The sum of the division is: "<< sum << '\n';
+    if (numbers[1] != 0)
+    {
+        sum = numbers[0] / numbers[1];
+        std::cout << "The sum of the division is: "<< sum << '\n';
+    }
+    else
+    {
+        std::cout << "DONT DIVIDE BY ZERO YOU BUFFON!"<< '\n';
+    }
 }
 
 void Calculator::ExecuteState(CalcState state)
