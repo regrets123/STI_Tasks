@@ -4,18 +4,19 @@
 
 void Controller::Run()
 {
-    std::string welcome = "Welcome to Saturn's moons Dione's Deep Ice Thermostat module.\n Please input the corresponding menu option number:";
+    std::string welcome = "Welcome to Saturn's moons Dione's Deep Ice Thermostat module.\nPlease input the corresponding option:";
     std::cout << welcome << '\n';
     while (true)
     {
         int choice = DisplayMenu();
         ExecuteChoice(choice);
     }
+    
 }
 
-int Controller::GetValidNumber()
+float Controller::GetValidNumber()
 {
-    int num;
+    float num;
     while (true)
     {
         std::cin >> num;
@@ -39,30 +40,37 @@ void Controller::ExecuteChoice(int choice)
     {
     case MenuOptions::calculateData:
         {
+            analyser->CalculateData();
             break;
         }
     case MenuOptions::addData:
         {
+            collector.AddData();
             break;
         }
     case MenuOptions::generateRandomData:
         {
+            collector.GenerateRandomData();
             break;
         }
     case MenuOptions::displayData:
         {
+            collector.ProcessData();
             break;
         }
     case MenuOptions::lookupValue:
         {
+            analyser.LookupValue();
             break;
         }
     case MenuOptions::lookupDate:
         {
+            analyser.LookupDate();
             break;
         }
     case MenuOptions::sortData:
         {
+            analyser.SortData();
             break;
         }
     case MenuOptions::exit:
@@ -81,7 +89,7 @@ int Controller::DisplayMenu() const
 {
     for (std::size_t i = 1; i < menuStrings.size(); ++i)
     {
-       std::cout << menuStrings[0] << i << menuStrings[i] << '\n';
+       std::cout << menuStrings[0] << i << " "<< menuStrings[i] << '\n';
     }
     int inputValue = GetValidNumber();
     return inputValue;

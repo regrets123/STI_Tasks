@@ -14,7 +14,7 @@ public:
           collector(collector),
           analyser(analyser) { }
     
-    static int GetValidNumber();
+    static float GetValidNumber();
     
     void ExecuteChoice(int choice);
     int DisplayMenu() const;
@@ -30,13 +30,13 @@ protected:
 private:
    
     std::array<std::string, static_cast<int>(MenuOptions::maxNum)> menuStrings =
-        {"Input number: "," to calculate the current data.","to input new Data to the system.",
-        "to generate new mock data.", "to display the current calculated data",
+        {"Input: ","to calculate the current data.","to input new Data to the system.",
+        "to generate mock data.", "to display the current calculated data",
         "to check for a specific temperature.", "to check the data at a specific date.",
         "to sort the data.", "to exit the module."};
     MenuOptions selectedOption;
     bool isInitialized = false;
-    DataCollector* collector;
-    DataAnalyser* analyser;
+    DataCollector collector;
+    DataAnalyser analyser;
     
 };
