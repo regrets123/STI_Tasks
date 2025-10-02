@@ -40,7 +40,7 @@ void Controller::ExecuteChoice(int choice)
     {
     case MenuOptions::calculateData:
         {
-            analyser->CalculateData();
+            analyser.CalculateData();
             break;
         }
     case MenuOptions::addData:
@@ -91,7 +91,7 @@ int Controller::DisplayMenu() const
     {
        std::cout << menuStrings[0] << i << " "<< menuStrings[i] << '\n';
     }
-    int inputValue = GetValidNumber();
+    int inputValue = static_cast<int>(GetValidNumber());
     return inputValue;
 }
 

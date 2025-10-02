@@ -2,9 +2,6 @@
 
 int main(int argc, char* argv[])
 {
-    auto dataCollector = new DataCollector();
-    auto dataAnalyser = new DataAnalyser();
-
-    auto controller = new Controller(true, dataCollector, dataAnalyser);
+    auto controller = new Controller();
     controller->Run();
 }

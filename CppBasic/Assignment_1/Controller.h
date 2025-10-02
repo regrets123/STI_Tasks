@@ -8,11 +8,6 @@
 class Controller
 {
 public:
-
-    Controller(bool isInitialized, DataCollector* collector, DataAnalyser* analyser)
-        : isInitialized(isInitialized),
-          collector(collector),
-          analyser(analyser) { }
     
     static float GetValidNumber();
     
