@@ -16,7 +16,6 @@ void DataCollector::AddData()
     std::cout << prompts[0] << '\n';
     int dataIterations = static_cast<int>(Controller::GetValidNumber());
     manualTime ? GetManualTime(dataIterations) : GetAutoTime(dataIterations);
-    ProcessData();
 }
 void DataCollector::GetManualTime(int iterations)
 {

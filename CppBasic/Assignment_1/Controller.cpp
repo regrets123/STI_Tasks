@@ -1,6 +1,9 @@
 #include "Controller.h"
 
-
+void Controller::Initialize()
+{
+    analyser.Initialize(collector.GetData());
+}
 
 void Controller::Run()
 {
@@ -33,6 +36,7 @@ float Controller::GetValidNumber()
         }
     }
 }
+
 void Controller::ExecuteChoice(int choice)
 {
     const auto menuOption = static_cast<MenuOptions>(choice);
@@ -51,11 +55,6 @@ void Controller::ExecuteChoice(int choice)
     case MenuOptions::generateRandomData:
         {
             collector.GenerateRandomData();
-            break;
-        }
-    case MenuOptions::displayData:
-        {
-            collector.ProcessData();
             break;
         }
     case MenuOptions::lookupValue:
