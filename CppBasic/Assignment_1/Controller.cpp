@@ -1,10 +1,5 @@
 #include "Controller.h"
 
-void Controller::Initialize()
-{
-    analyser.Initialize(collector.GetData());
-}
-
 void Controller::Run()
 {
     std::string welcome = "Welcome to Saturn's moons Dione's Deep Ice Thermostat module.\nPlease input the corresponding option:";
@@ -37,39 +32,39 @@ float Controller::GetValidNumber()
     }
 }
 
-void Controller::ExecuteChoice(int choice)
+void Controller::ExecuteChoice(const int& choice)
 {
     const auto menuOption = static_cast<MenuOptions>(choice);
     switch (menuOption)
     {
     case MenuOptions::calculateData:
         {
-            analyser.CalculateData();
+            dataPtr->CalculateData();
             break;
         }
     case MenuOptions::addData:
         {
-            collector.AddData();
+            collectorPtr->AddData();
             break;
         }
     case MenuOptions::generateRandomData:
         {
-            collector.GenerateRandomData();
+            collectorPtr->GenerateRandomData();
             break;
         }
     case MenuOptions::lookupValue:
         {
-            analyser.LookupValue();
+            dataPtr->LookupValue();
             break;
         }
     case MenuOptions::lookupDate:
         {
-            analyser.LookupDate();
+            dataPtr->LookupDate();
             break;
         }
     case MenuOptions::sortData:
         {
-            analyser.SortData();
+            dataPtr->SortData();
             break;
         }
     case MenuOptions::exit:

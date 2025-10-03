@@ -5,14 +5,14 @@
 class DataAnalyser
 {
 public:
-    void Initialize(std::unordered_map<time_t ,float>* dataPtr);
+    DataAnalyser(std::unordered_map<time_t, float>* dataCollection)
+        : dataCollection(dataCollection)
+    {
+    }
     void CalculateData();
     void SortData();
     void LookupValue();
     void LookupDate();
-    bool IsInitialized() const
-    { return isInitialized; }
 private:
-    bool isInitialized;
-    std::unique_ptr<std::unordered_map<time_t ,float>> dataCollection;
+    std::unordered_map<time_t ,float>* dataCollection;
 };
