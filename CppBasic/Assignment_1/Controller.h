@@ -11,12 +11,11 @@ class Controller
 
     
 public:
-    // ReSharper disable once CppPossiblyUninitializedMember
     Controller(std::unique_ptr<DataAnalyser>&& dataPtr, std::unique_ptr<DataCollector>&& collectorPtr)
   : dataPtr(std::move(dataPtr)),
     collectorPtr(std::move(collectorPtr)){}
 
-    static float GetValidNumber();
+    static long long GetValidNumber();
     void ExecuteChoice(const int& choice);
     int DisplayMenu() const;
     void Run();
@@ -35,7 +34,6 @@ private:
         {"Input: ","to calculate and display the current data.","to input new Data to the system.",
         "to generate mock data.", "to check for a specific temperature.", "to check the data at a specific date.",
         "to sort the data.", "to exit the module."};
-    MenuOptions selectedOption;
     
     std::unique_ptr<DataAnalyser> dataPtr;
     std::unique_ptr<DataCollector> collectorPtr;

@@ -13,9 +13,9 @@ void Controller::Run()
     }
 }
 
-float Controller::GetValidNumber()
+long long Controller::GetValidNumber()
 {
-    float num;
+    long long num;
     while (true)
     {
         std::cin >> num;
