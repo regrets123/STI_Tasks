@@ -5,14 +5,13 @@
 class DataAnalyser
 {
 public:
-    DataAnalyser(std::unordered_map<time_t, float>* dataCollection)
-        : dataCollection(dataCollection)
-    {
-    }
+    DataAnalyser(std::unique_ptr<std::unordered_map<time_t, float>> dataCollection)
+         : dataCollection(std::move(dataCollection))
+    {}
     void CalculateData();
     void SortData();
     void LookupValue();
     void LookupDate();
 private:
-    std::unordered_map<time_t ,float>* dataCollection;
+    std::unique_ptr<std::unordered_map<time_t, float>> dataCollection;
 };

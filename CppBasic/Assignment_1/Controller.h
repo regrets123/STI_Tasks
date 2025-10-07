@@ -23,8 +23,6 @@ public:
     void DisplayData();
     void Exit();
 
-    std::unique_ptr<DataAnalyser> dataPtr;
-    std::unique_ptr<DataCollector> collectorPtr;
     
 protected:
     enum class MenuOptions : uint8_t
@@ -38,4 +36,7 @@ private:
         "to generate mock data.", "to check for a specific temperature.", "to check the data at a specific date.",
         "to sort the data.", "to exit the module."};
     MenuOptions selectedOption;
+    
+    std::unique_ptr<DataAnalyser> dataPtr;
+    std::unique_ptr<DataCollector> collectorPtr;
 };

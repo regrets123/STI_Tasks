@@ -2,14 +2,15 @@
 
 void Controller::Run()
 {
-    std::string welcome = "Welcome to Saturn's moons Dione's Deep Ice Thermostat module.\nPlease input the corresponding option:";
+    std::string welcome =
+        "Welcome to Saturn's moons Dione's Deep Ice Thermostat module.\nPlease input the corresponding option:";
     std::cout << welcome << '\n';
-    while (true)
+    int choice = 0;
+    while (choice != 7)
     {
-        int choice = DisplayMenu();
+        choice = DisplayMenu();
         ExecuteChoice(choice);
     }
-    
 }
 
 float Controller::GetValidNumber()
