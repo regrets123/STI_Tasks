@@ -12,20 +12,19 @@ void DataCollector::Initialize()
 
 void DataCollector::AddData()
 {
-    std::cout << timeChoices[0] << "\n" << timeChoices[1] << "\n";
+    std::cout << currentTimeMsg << "\n" << manualTimeMsg << "\n";
     bool manualTime = static_cast<bool>(Controller::GetValidNumber());
-    std::cout << prompts[0] << '\n';
+    std::cout << amountMsg << '\n';
     int dataIterations = static_cast<int>(Controller::GetValidNumber());
     manualTime ? GetManualTime(dataIterations) : GetAutoTime(dataIterations);
 }
 void DataCollector::GetManualTime(int iterations)
 {
-    std::cout << prompts[2] << '\n';
-    std::unordered_map<long long,float> dataSets;
+    std::map<long long,float> dataSets;
     for (int i = 0; i < iterations; i++)
     {
         std::array<long long,2> input;
-        std::cout << timeChoices[2] << '\n';
+        std::cout << pairMsg << '\n';
         input[0] = Controller::GetValidNumber();
         input[1] = Controller::GetValidNumber();
         dataCollection->insert(std::pair<long long,float>(input[0],input[1]));
@@ -33,8 +32,8 @@ void DataCollector::GetManualTime(int iterations)
 }
 void DataCollector::GetAutoTime(int iterations)
 {
-    std::cout << prompts[1] << '\n';
-    std::unordered_map<long long,float> dataSets;
+    std::cout << valueMsg << '\n';
+    std::map<long long,float> dataSets;
     for (int i = 0; i < iterations; i++)
     {
         float input = static_cast<float>(Controller::GetValidNumber());
@@ -45,7 +44,7 @@ void DataCollector::GetAutoTime(int iterations)
 }
 void DataCollector::GenerateRandomData()
 {
-    std::cout << prompts[3] << '\n';
+    std::cout << genDataMsg << '\n';
     int iterator =  static_cast<int>(Controller::GetValidNumber());
     std::random_device rd;
     std::mt19937 gen(rd());

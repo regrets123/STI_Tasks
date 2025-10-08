@@ -1,6 +1,10 @@
 #include "DataAnalyser.h"
+
+#include <algorithm>
 #include <iomanip>
 #include <iostream>
+
+#include "Controller.h"
 
 void DataAnalyser::CalculateData() const
 {
@@ -26,8 +30,47 @@ void DataAnalyser::CalculateData() const
 }
 void DataAnalyser::SortData()
 {
-    //newest, oldest, specific value both date and temperature, biggest first, smallest first
+    std::cout << earlySortMsg << '\n' << oldSortMsg << '\n' << coldSortMsg << '\n' << hotSortMsg << '\n';
+    SortType choice = static_cast<SortType>(Controller::GetValidNumber());
+    switch (choice)
+    {
+    case SortType::Earliest:
+        {
+            break; 
+        }
+    case SortType::Oldest:
+        {
+            break;        
+        }
+    case SortType::Hottest:
+        {
+            break;            
+        }
+    case SortType::Coldest:
+        {
+            break;            
+        }
+    default:
+        std::cout << Controller::ErrorMsg << '\n';
+    }
 }
+
+const std::vector<std::pair<time_t, float>>& DataAnalyser::ByValueAscending() const
+{
+    sortBuffer.assign(dataCollection->begin(), dataCollection->end());
+    std::sort(sortBuffer.begin(), sortBuffer.end(), 
+        [](const auto& a, const auto& b) { return a.second < b.second; });
+    return sortBuffer;
+}
+
+const std::vector<std::pair<time_t, float>>& DataAnalyser::ByValueDescending() const
+{
+    sortBuffer.assign(dataCollection->begin(), dataCollection->end());
+    std::sort(sortBuffer.begin(), sortBuffer.end(), 
+        [](const auto& a, const auto& b) { return a.second > b.second; });
+    return sortBuffer;
+}
+    
 void DataAnalyser::LookupValue()
 {
     
@@ -59,12 +102,12 @@ void DataAnalyser::PrintData(const Results& result) const
     std::cout << averageMsg << result.AverageValue <<'\n';
     std::cout << maxMsg << result.MaxValue.second <<'\n';
     if (localtime_s(&timeInfo, &result.MaxValue.first) == 0) {
-        std::cout << dateMsg << std::put_time(&timeInfo, "%Y-%m-%d %H:%M:%S") << '\n';
+        std::cout << dateMsg << std::put_time(&timeInfo, formatArg) << '\n';
     }
     std::cout << minMsg << result.MinValue.second <<'\n';
     if (localtime_s(&timeInfo, &result.MinValue.first) == 0)
     {
-        std::cout << dateMsg << std::put_time(&timeInfo, "%Y-%m-%d %H:%M:%S") << '\n';
+        std::cout << dateMsg << std::put_time(&timeInfo, formatArg) << '\n';
     }
     std::cout << varianceMsg << result.Variance << '\n';
     std::cout << deviationMsg << result.StdDeviation <<'\n';

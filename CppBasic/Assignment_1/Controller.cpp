@@ -2,9 +2,8 @@
 
 void Controller::Run()
 {
-    std::string welcome =
-        "Welcome to Saturn's moons Dione's Deep Ice Thermostat module.\nPlease input the corresponding option:";
-    std::cout << welcome << '\n';
+    
+    std::cout << welcomeMsg << '\n';
     int choice = 0;
     while (choice != 7)
     {
@@ -21,7 +20,7 @@ long long Controller::GetValidNumber()
         std::cin >> num;
         if (std::cin.fail())
         {
-            std::cout << "Invalid input! Try again, use numbers!\n";
+            std::cout << ErrorMsg << '\n';
             std::cin.clear();
             std::cin.ignore(10000, '\n');
         }
@@ -75,7 +74,7 @@ void Controller::ExecuteChoice(const int& choice)
         }
     default:
         {
-            std::cout << "Invalid input! Please try again.\n";
+            std::cout << ErrorMsg;
         }
     }
 }
