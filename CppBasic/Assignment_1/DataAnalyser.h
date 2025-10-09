@@ -11,17 +11,23 @@ public:
     DataAnalyser(const std::shared_ptr<std::map<time_t, float>>& dataCollection)
          : dataCollection(dataCollection)
     {}
-    void CalculateData() const;
+    template<typename Container>
+    void CalculateData(const Container& dataCol) const;
+    // void CalculateData(const std::map<time_t,float>& dataCol) const;
+    // void CalculateData(const std::vector<std::pair<time_t, float>>& dataCol) const;
     void SortData();
     void LookupValue();
     void LookupDate();
-    const std::vector<std::pair<time_t, float>>& ByValueAscending() const;
-    const std::vector<std::pair<time_t, float>>& ByValueDescending() const;
+    std::vector<std::pair<time_t, float>>& ByTimeDescending();
+    std::vector<std::pair<time_t, float>>& ByValueAscending();
+    std::vector<std::pair<time_t, float>>& ByValueDescending();
 private:
     
     std::shared_ptr<std::map<time_t, float>> dataCollection;
-    mutable std::vector<std::pair<time_t, float>> sortBuffer; 
-    enum class SortType   {None,Earliest,Oldest,Hottest,Coldest ,MaxNum};
+    std::vector<std::pair<time_t, float>> sortBuffer;
+    
+    enum class SortType {None,Earliest,Oldest,Hottest,Coldest ,MaxNum};
+    
     struct Results  
     {
         float ValueCount = 0.0f;
@@ -32,6 +38,7 @@ private:
         std::pair<time_t, float> MaxValue{0, -FLT_MAX};
         std::pair<time_t, float> MinValue{0, FLT_MAX};
     };
+    
     static void CalcMax(const std::pair<time_t, float>& toCalc, std::pair<time_t, float>& maxValue);
     static void CalcMin(const std::pair<time_t, float>& toCalc, std::pair<time_t, float>& minValue);
     void PrintData(const Results& result) const;

@@ -1,16 +1,36 @@
 #include "DataAnalyser.h"
-
+#include <vector>
 #include <algorithm>
 #include <iomanip>
-#include <iostream>
-
 #include "Controller.h"
 
-void DataAnalyser::CalculateData() const
+template<typename Container>
+void DataAnalyser::CalculateData(const Container& dataCol) const
 {
     Results data;
-    data.ValueCount = static_cast<float>(dataCollection->size()); 
-    for (const auto& dataSet : *dataCollection)
+    data.ValueCount = static_cast<float>(dataCol.size()); 
+    for (const auto& dataSet : dataCol)
+    {
+        data.TotalSum += dataSet.second;
+        CalcMin(dataSet, data.MinValue);
+        CalcMax(dataSet, data.MaxValue);
+    }
+    data.AverageValue = data.TotalSum / data.ValueCount;
+    for (const auto& dataSet : dataCol)
+    {
+        float diff = dataSet.second - data.AverageValue;
+        data.Variance += diff * diff;
+    }
+    data.Variance /= data.ValueCount; 
+    data.StdDeviation = std::sqrt(data.Variance);
+    PrintData(data);
+}
+
+/*void DataAnalyser::CalculateData(const std::map<time_t,float>& dataCol) const
+{
+    Results data;
+    data.ValueCount = static_cast<float>(dataCol.size()); 
+    for (const auto& dataSet : dataCol)
     {
         data.TotalSum += dataSet.second;
         CalcMin(dataSet,data.MinValue);
@@ -18,7 +38,7 @@ void DataAnalyser::CalculateData() const
      
     }
     data.AverageValue = data.TotalSum / data.ValueCount;
-    for (const auto& dataSet : *dataCollection)
+    for (const auto& dataSet : dataCol)
     {
         float diff = dataSet.second - data.AverageValue;
         data.Variance += diff * diff;
@@ -28,6 +48,28 @@ void DataAnalyser::CalculateData() const
     PrintData(data);
     
 }
+void DataAnalyser::CalculateData(const std::vector<std::pair<time_t, float>>& dataCol) const
+{
+    Results data;
+    data.ValueCount = static_cast<float>(dataCol.size()); 
+    for (const auto& dataSet : dataCol)
+    {
+        data.TotalSum += dataSet.second;
+        CalcMin(dataSet,data.MinValue);
+        CalcMax(dataSet,data.MaxValue);
+     
+    }
+    data.AverageValue = data.TotalSum / data.ValueCount;
+    for (const auto& dataSet : dataCol)
+    {
+        float diff = dataSet.second - data.AverageValue;
+        data.Variance += diff * diff;
+    }
+    data.Variance /= data.ValueCount; 
+    data.StdDeviation = std::sqrt(data.Variance);
+    PrintData(data);
+}*/
+
 void DataAnalyser::SortData()
 {
     std::cout << earlySortMsg << '\n' << oldSortMsg << '\n' << coldSortMsg << '\n' << hotSortMsg << '\n';
@@ -36,18 +78,23 @@ void DataAnalyser::SortData()
     {
     case SortType::Earliest:
         {
+            //already sorted by this.
+            CalculateData(*dataCollection);
             break; 
         }
     case SortType::Oldest:
         {
+            CalculateData(ByValueAscending());
             break;        
         }
     case SortType::Hottest:
         {
+            CalculateData(ByValueDescending());
             break;            
         }
     case SortType::Coldest:
         {
+            CalculateData(ByValueAscending());
             break;            
         }
     default:
@@ -55,7 +102,7 @@ void DataAnalyser::SortData()
     }
 }
 
-const std::vector<std::pair<time_t, float>>& DataAnalyser::ByValueAscending() const
+std::vector<std::pair<time_t, float>>& DataAnalyser::ByValueAscending()
 {
     sortBuffer.assign(dataCollection->begin(), dataCollection->end());
     std::sort(sortBuffer.begin(), sortBuffer.end(), 
@@ -63,7 +110,7 @@ const std::vector<std::pair<time_t, float>>& DataAnalyser::ByValueAscending() co
     return sortBuffer;
 }
 
-const std::vector<std::pair<time_t, float>>& DataAnalyser::ByValueDescending() const
+std::vector<std::pair<time_t, float>>& DataAnalyser::ByValueDescending()
 {
     sortBuffer.assign(dataCollection->begin(), dataCollection->end());
     std::sort(sortBuffer.begin(), sortBuffer.end(), 
@@ -73,12 +120,20 @@ const std::vector<std::pair<time_t, float>>& DataAnalyser::ByValueDescending() c
     
 void DataAnalyser::LookupValue()
 {
-    
+
 }
 void DataAnalyser::LookupDate()
 {
     
 }
+
+
+std::vector<std::pair<time_t, float>>& DataAnalyser::ByTimeDescending()
+{
+    sortBuffer.assign(dataCollection->rbegin(), dataCollection->rend());
+    return sortBuffer;
+}
+
 void DataAnalyser::CalcMax(const std::pair<time_t, float>& toCalc, std::pair<time_t, float>& maxValue)
 {
     if (toCalc.second > maxValue.second) {

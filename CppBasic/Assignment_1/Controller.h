@@ -7,8 +7,8 @@
 
 class Controller
 {
-
-
+//In this solution I am trying to mimic embedded environment logic to the best of my understanding.
+//Ex: using char* instead of std::string to avoid dynamic stack allocations, reusing the same strings instead of creating new at each method call.
     
 public:
     Controller(std::unique_ptr<DataAnalyser>&& dataPtr, std::unique_ptr<DataCollector>&& collectorPtr)
@@ -20,13 +20,12 @@ public:
     int DisplayMenu() const;
     void Run();
     void DisplayData();
-    void Exit();
 
     static constexpr const char* ErrorMsg = "Invalid input! Try again, use numbers!";
 protected:
     enum class MenuOptions : uint8_t
     {
-        none, calculateData, addData, generateRandomData, lookupValue, lookupDate, sortData, exit, maxNum,
+        none, calculateData, addData, generateRandomData, lookupValue, lookupDate, sortData, exit, maxNum, 
     };
     
 private:

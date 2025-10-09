@@ -1,4 +1,5 @@
 #include "Controller.h"
+#include "DataAnalyser.h"
 
 void Controller::Run()
 {
@@ -39,7 +40,7 @@ void Controller::ExecuteChoice(const int& choice)
     {
     case MenuOptions::calculateData:
         {
-            dataPtr->CalculateData();
+            dataPtr->CalculateData(*collectorPtr->dataCollection);
             break;
         }
     case MenuOptions::addData:
@@ -69,7 +70,6 @@ void Controller::ExecuteChoice(const int& choice)
         }
     case MenuOptions::exit:
         {
-            Exit();
             break;
         }
     default:
@@ -93,6 +93,3 @@ void Controller::DisplayData()
 {
 }
 
-void Controller::Exit()
-{
-}

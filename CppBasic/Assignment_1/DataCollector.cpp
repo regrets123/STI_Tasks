@@ -18,6 +18,7 @@ void DataCollector::AddData()
     int dataIterations = static_cast<int>(Controller::GetValidNumber());
     manualTime ? GetManualTime(dataIterations) : GetAutoTime(dataIterations);
 }
+
 void DataCollector::GetManualTime(int iterations)
 {
     std::map<long long,float> dataSets;
@@ -30,6 +31,7 @@ void DataCollector::GetManualTime(int iterations)
         dataCollection->insert(std::pair<long long,float>(input[0],input[1]));
     }
 }
+
 void DataCollector::GetAutoTime(int iterations)
 {
     std::cout << valueMsg << '\n';
