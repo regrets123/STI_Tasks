@@ -89,7 +89,19 @@ int Controller::DisplayMenu() const
     return inputValue;
 }
 
-void Controller::DisplayData()
+std::tm Controller::InputDate()
 {
+    std::cout << "Enter date (YYYY MM DD): ";
+    int year, month, day;
+    std::cin >> year >> month >> day;
+    
+    std::tm startTm = {};
+    startTm.tm_year = year - 1900;  // tm_year is years since 1900
+    startTm.tm_mon = month - 1;      // tm_mon is 0-11
+    startTm.tm_mday = day;
+    startTm.tm_hour = 0;
+    startTm.tm_min = 0;
+    startTm.tm_sec = 0;
+    return startTm;
 }
 

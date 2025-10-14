@@ -26,73 +26,29 @@ void DataAnalyser::CalculateData(const Container& dataCol) const
     PrintData(data);
 }
 
-/*void DataAnalyser::CalculateData(const std::map<time_t,float>& dataCol) const
-{
-    Results data;
-    data.ValueCount = static_cast<float>(dataCol.size()); 
-    for (const auto& dataSet : dataCol)
-    {
-        data.TotalSum += dataSet.second;
-        CalcMin(dataSet,data.MinValue);
-        CalcMax(dataSet,data.MaxValue);
-     
-    }
-    data.AverageValue = data.TotalSum / data.ValueCount;
-    for (const auto& dataSet : dataCol)
-    {
-        float diff = dataSet.second - data.AverageValue;
-        data.Variance += diff * diff;
-    }
-    data.Variance /= data.ValueCount; 
-    data.StdDeviation = std::sqrt(data.Variance);
-    PrintData(data);
-    
-}
-void DataAnalyser::CalculateData(const std::vector<std::pair<time_t, float>>& dataCol) const
-{
-    Results data;
-    data.ValueCount = static_cast<float>(dataCol.size()); 
-    for (const auto& dataSet : dataCol)
-    {
-        data.TotalSum += dataSet.second;
-        CalcMin(dataSet,data.MinValue);
-        CalcMax(dataSet,data.MaxValue);
-     
-    }
-    data.AverageValue = data.TotalSum / data.ValueCount;
-    for (const auto& dataSet : dataCol)
-    {
-        float diff = dataSet.second - data.AverageValue;
-        data.Variance += diff * diff;
-    }
-    data.Variance /= data.ValueCount; 
-    data.StdDeviation = std::sqrt(data.Variance);
-    PrintData(data);
-}*/
-
 void DataAnalyser::SortData()
 {
     std::cout << earlySortMsg << '\n' << oldSortMsg << '\n' << coldSortMsg << '\n' << hotSortMsg << '\n';
     SortType choice = static_cast<SortType>(Controller::GetValidNumber());
     switch (choice)
     {
-    case SortType::Earliest:
+    case SortType::earliest:
         {
             //already sorted by this.
             CalculateData(*dataCollection);
             break; 
         }
-    case SortType::Oldest:
+    case SortType::oldest:
         {
             CalculateData(ByValueAscending());
             break;        
         }
-    case SortType::Hottest:
+    case SortType::hottest:
         {
             CalculateData(ByValueDescending());
             break;            
         }
-    case SortType::Coldest:
+    case SortType::coldest:
         {
             CalculateData(ByValueAscending());
             break;            
@@ -120,13 +76,50 @@ std::vector<std::pair<time_t, float>>& DataAnalyser::ByValueDescending()
     
 void DataAnalyser::LookupValue()
 {
+    std::cout << findTempratureMsg << '\n';
+    float valueToFind = static_cast<float>(Controller::GetValidNumber());
+    bool found = false;
+    const float accuarcy = 0.001f;
+    for (const auto& pair : *dataCollection) {
 
+        if (std::abs(pair.second - valueToFind) < accuarcy )
+        {
+            found = true;
+            std::cout << "Found value at date: " <<pair.first << "with the temp: " <<pair.second << '\n';
+        }
+    }
+    if (!found)
+    {
+        std::cout << cantFindMsg << '\n';
+    }
 }
+
 void DataAnalyser::LookupDate()
 {
+    std::tm startTm = Controller::InputDate();
+    // Convert to time_t
+    time_t startTime = std::mktime(&startTm);
+    time_t endTime = startTime + (24 * 60 * 60); // Add 24 hours
     
+    if (startTime == -1) {
+        std::cout << "Invalid date" << '\n';
+        return;
+    }
+    
+    bool found = false;
+    for (const auto& pair : *dataCollection) {
+        if (pair.first >= startTime && pair.first < endTime) {
+            // Convert time_t back to readable format for display
+            std::tm* localTime = std::localtime(&pair.first);
+            std::cout <<"This data was found at the date: " << std::put_time(localTime, formatArg) 
+                      << " Value: " << pair.second << '\n';
+            found = true;
+        }
+    }
+    if (!found) {
+        std::cout << "No data found for this date" << std::endl;
+    }
 }
-
 
 std::vector<std::pair<time_t, float>>& DataAnalyser::ByTimeDescending()
 {

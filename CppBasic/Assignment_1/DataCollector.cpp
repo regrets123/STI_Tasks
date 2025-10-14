@@ -26,7 +26,9 @@ void DataCollector::GetManualTime(int iterations)
     {
         std::array<long long,2> input;
         std::cout << pairMsg << '\n';
-        input[0] = Controller::GetValidNumber();
+        tm time = Controller::InputDate();
+        time_t startTime = std::mktime(&time);
+        input[0] = startTime;
         input[1] = Controller::GetValidNumber();
         dataCollection->insert(std::pair<long long,float>(input[0],input[1]));
     }

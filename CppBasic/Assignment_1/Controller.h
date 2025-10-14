@@ -16,10 +16,10 @@ public:
     collectorPtr(std::move(collectorPtr)){}
 
     static long long GetValidNumber();
+    static std::tm InputDate();
     void ExecuteChoice(const int& choice);
     int DisplayMenu() const;
     void Run();
-    void DisplayData();
 
     static constexpr const char* ErrorMsg = "Invalid input! Try again, use numbers!";
 protected:
