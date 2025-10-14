@@ -91,9 +91,12 @@ int Controller::DisplayMenu() const
 
 std::tm Controller::InputDate()
 {
-    std::cout << "Enter date (YYYY MM DD): ";
-    int year, month, day;
-    std::cin >> year >> month >> day;
+    std::cout << "Enter date Year YYYY:" << '\n';
+    int year = static_cast<int>(GetValidNumber());
+    std::cout << "Enter month MM:" << '\n';
+    int month = static_cast<int>(GetValidNumber());
+    std::cout << "Enter day DD:" << '\n';
+    int day = static_cast<int>(GetValidNumber());
     
     std::tm startTm = {};
     startTm.tm_year = year - 1900;  // tm_year is years since 1900

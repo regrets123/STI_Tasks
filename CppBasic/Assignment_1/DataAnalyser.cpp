@@ -4,7 +4,7 @@
 #include <iomanip>
 #include "Controller.h"
 
-template<typename Container>
+template<typename Container> 
 void DataAnalyser::CalculateData(const Container& dataCol) const
 {
     Results data;
@@ -14,6 +14,9 @@ void DataAnalyser::CalculateData(const Container& dataCol) const
         data.TotalSum += dataSet.second;
         CalcMin(dataSet, data.MinValue);
         CalcMax(dataSet, data.MaxValue);
+        std::tm localTime;
+        localtime_s(&localTime, &dataSet.first);
+        std::cout << std::put_time(&localTime, formatArg) << " " << dataSet.second << '\n';
     }
     data.AverageValue = data.TotalSum / data.ValueCount;
     for (const auto& dataSet : dataCol)
@@ -26,21 +29,25 @@ void DataAnalyser::CalculateData(const Container& dataCol) const
     PrintData(data);
 }
 
+//since we only have two data types in this solution i can explicitly define these two, other syntax solution would be to put the entire actual method in the header instead. Templates feels kinda messy to work with tbh.
+template void DataAnalyser::CalculateData(const std::map<time_t, float>&) const;
+template void DataAnalyser::CalculateData(const std::vector<std::pair<time_t, float>>&) const;
+
 void DataAnalyser::SortData()
 {
-    std::cout << earlySortMsg << '\n' << oldSortMsg << '\n' << coldSortMsg << '\n' << hotSortMsg << '\n';
+    std::cout << earlySortMsg << '\n' << oldSortMsg << '\n' << hotSortMsg << '\n' << coldSortMsg << '\n';
     SortType choice = static_cast<SortType>(Controller::GetValidNumber());
     switch (choice)
     {
     case SortType::earliest:
         {
-            //already sorted by this.
-            CalculateData(*dataCollection);
+            CalculateData(ByTimeDescending());
             break; 
         }
     case SortType::oldest:
         {
-            CalculateData(ByValueAscending());
+            //already sorted by this.
+            CalculateData(*dataCollection);
             break;        
         }
     case SortType::hottest:
@@ -76,16 +83,18 @@ std::vector<std::pair<time_t, float>>& DataAnalyser::ByValueDescending()
     
 void DataAnalyser::LookupValue()
 {
-    std::cout << findTempratureMsg << '\n';
+    std::cout << findTemperatureMsg << '\n';
+    float accuarcy = static_cast<float>(Controller::GetValidNumber());
     float valueToFind = static_cast<float>(Controller::GetValidNumber());
     bool found = false;
-    const float accuarcy = 0.001f;
     for (const auto& pair : *dataCollection) {
 
         if (std::abs(pair.second - valueToFind) < accuarcy )
         {
             found = true;
-            std::cout << "Found value at date: " <<pair.first << "with the temp: " <<pair.second << '\n';
+            std::tm localTime;
+            localtime_s(&localTime, &pair.first);
+            std::cout << "Found value at date: " <<std::put_time(&localTime, formatArg) << " with the temp: " <<pair.second << '\n';
         }
     }
     if (!found)
@@ -96,11 +105,11 @@ void DataAnalyser::LookupValue()
 
 void DataAnalyser::LookupDate()
 {
+    std::cout << findDateMsg << '\n';
     std::tm startTm = Controller::InputDate();
     // Convert to time_t
     time_t startTime = std::mktime(&startTm);
     time_t endTime = startTime + (24 * 60 * 60); // Add 24 hours
-    
     if (startTime == -1) {
         std::cout << "Invalid date" << '\n';
         return;
@@ -110,14 +119,15 @@ void DataAnalyser::LookupDate()
     for (const auto& pair : *dataCollection) {
         if (pair.first >= startTime && pair.first < endTime) {
             // Convert time_t back to readable format for display
-            std::tm* localTime = std::localtime(&pair.first);
-            std::cout <<"This data was found at the date: " << std::put_time(localTime, formatArg) 
+            std::tm localTime;
+            localtime_s(&localTime, &pair.first);
+            std::cout <<"This data was found at the date: " << std::put_time(&localTime, formatArg) 
                       << " Value: " << pair.second << '\n';
             found = true;
         }
     }
     if (!found) {
-        std::cout << "No data found for this date" << std::endl;
+        std::cout << "No data found for this date" << '\n';
     }
 }
 
