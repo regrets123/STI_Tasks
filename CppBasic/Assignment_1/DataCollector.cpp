@@ -29,6 +29,7 @@ void DataCollector::GetManualTime(int iterations)
         tm time = Controller::InputDate();
         time_t startTime = std::mktime(&time);
         input[0] = startTime;
+        std::cout << valueMsg << '\n';
         input[1] = Controller::GetValidNumber();
         dataCollection->insert(std::pair<long long,float>(input[0],input[1]));
     }
