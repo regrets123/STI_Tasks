@@ -16,6 +16,9 @@ public:
     collectorPtr(std::move(collectorPtr)){}
 
     static long long GetValidNumber();
+    static int GetValidYear();
+    static int GetValidMonth(int year);
+    static int GetValidDay(int year, int month);
     static std::tm InputDate();
     void ExecuteChoice(const int& choice);
     int DisplayMenu() const;
