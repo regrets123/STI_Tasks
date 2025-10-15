@@ -24,6 +24,6 @@ private:
     const char* pairMsg = "Enter time <-> value pair number:";
     const char* genDataMsg = "Generating random Dataset, insert size of Dataset: ";
     const char* currentTimeMsg = "Enter 0 to use currentTime:";
-    const char* manualTimeMsg =  "Enter 1 to input time manually as an integer counting number of seconds since 00:00, Jan 1 1970 UTC:";
+    const char* manualTimeMsg =  "Enter 1 to input time manually after Jan 1 1970 UTC:";
 
 };

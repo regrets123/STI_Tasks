@@ -40,17 +40,18 @@ int Controller::GetValidYear()
 {
     auto now = std::chrono::system_clock::now();
     auto nowTimeT = std::chrono::system_clock::to_time_t(now);
-    std::tm* nowTm = std::localtime(&nowTimeT);
-    int currentYear = nowTm->tm_year + 1900; // tm_year is years since 1900
+    std::tm nowTm = {};
+    localtime_s(&nowTm, &nowTimeT);
+    int currentYear = nowTm.tm_year + 1900; // tm_year is years since 1900
     
     while (true)
     {
         int year = static_cast<int>(GetValidNumber());
-        if (year > 1899 && year <= currentYear)
+        if (year > 1969 && year <= currentYear) // we convert to time_t to be able to sort it, which starts at 1970
         {
             return year;
         }
-        std::cout << "Input a year between 1900 and " << currentYear << '\n';
+        std::cout << "Input a year between 1970 and " << currentYear << '\n';
     }
 }
 
@@ -58,9 +59,10 @@ int Controller::GetValidMonth(int year)
 {
     auto now = std::chrono::system_clock::now();
     auto nowTimeT = std::chrono::system_clock::to_time_t(now);
-    std::tm* nowTm = std::localtime(&nowTimeT);
-    int currentYear = nowTm->tm_year + 1900;
-    int currentMonth = nowTm->tm_mon + 1; // tm_mon is 0-11
+    std::tm nowTm = {};
+    localtime_s(&nowTm, &nowTimeT);
+    int currentYear = nowTm.tm_year + 1900;
+    int currentMonth = nowTm.tm_mon + 1; // tm_mon is 0-11
     
     while (true)
     {
@@ -85,10 +87,11 @@ int Controller::GetValidDay(int year, int month)
     // Date time is such a pain
     auto now = std::chrono::system_clock::now();
     auto nowTimeT = std::chrono::system_clock::to_time_t(now);
-    std::tm* nowTm = std::localtime(&nowTimeT);
-    int currentYear = nowTm->tm_year + 1900;
-    int currentMonth = nowTm->tm_mon + 1;
-    int currentDay = nowTm->tm_mday;
+    std::tm nowTm = {};
+    localtime_s(&nowTm, &nowTimeT);
+    int currentYear = nowTm.tm_year + 1900;
+    int currentMonth = nowTm.tm_mon + 1;
+    int currentDay = nowTm.tm_mday;
     
     int maxDay = 31;
     if (month == 2)
@@ -190,6 +193,8 @@ std::tm Controller::InputDate()
     startTm.tm_hour = 0;
     startTm.tm_min = 0;
     startTm.tm_sec = 0;
+    startTm.tm_isdst = -1;  
+    mktime(&startTm); 
     return startTm;
 }
 

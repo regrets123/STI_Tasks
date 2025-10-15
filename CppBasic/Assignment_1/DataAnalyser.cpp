@@ -14,8 +14,10 @@ void DataAnalyser::CalculateData(const Container& dataCol) const
         data.TotalSum += dataSet.second;
         CalcMin(dataSet, data.MinValue);
         CalcMax(dataSet, data.MaxValue);
-        std::tm localTime;
-        localtime_s(&localTime, &dataSet.first);
+        
+        std::tm localTime = {};
+        time_t timeValue = static_cast<time_t>(dataSet.first);
+        localtime_s(&localTime, &timeValue);
         std::cout << std::put_time(&localTime, formatArg) << " " << dataSet.second << '\n';
     }
     data.AverageValue = data.TotalSum / data.ValueCount;
