@@ -324,6 +324,9 @@
     <ClInclude Include="Assignment_1\DataCollector.h" />
     <ClInclude Include="Calculator.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assignment_1\README.md" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
