@@ -4,7 +4,6 @@
 #include "DataAnalyser.h"
 #include "DataCollector.h"
 
-
 class Controller
 {
 //In this solution I am trying to mimic embedded environment logic to the best of my understanding.
@@ -15,21 +14,21 @@ public:
   : dataPtr(std::move(dataPtr)),
     collectorPtr(std::move(collectorPtr)){}
 
+    enum class MenuOptions : uint8_t
+    {
+        none, calculateData, addData, generateRandomData, lookupValue, lookupDate, sortData, saveData, loadData, exit, maxNum, 
+    };
+    
     static long long GetValidNumber();
     static int GetValidYear();
     static int GetValidMonth(int year);
     static int GetValidDay(int year, int month);
     static std::tm InputDate();
-    void ExecuteChoice(const int& choice) const;
-    int DisplayMenu() const;
+    void ExecuteChoice(MenuOptions choice) const;
+    MenuOptions DisplayMenu() const;
     void Run() const;
 
     static constexpr auto ErrorMsg = "Invalid input! Try again, use numbers!";
-protected:
-    enum class MenuOptions : uint8_t
-    {
-        none, calculateData, addData, generateRandomData, lookupValue, lookupDate, sortData, saveData, loadData, exit, maxNum, 
-    };
     
 private:
     std::array<const char*, static_cast<int>(MenuOptions::maxNum)> menuStrings =

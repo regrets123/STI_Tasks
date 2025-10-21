@@ -84,9 +84,6 @@ void DataCollector::ReadData() const
         return;
     }
     inFile.seekg(0, std::ios::beg);
-    
-    dataCollection->clear();
-    
     size_t size;
     if (!inFile.read(reinterpret_cast<char*>(&size), sizeof(size))) {
         std::cerr << "Error reading size" << '\n';

@@ -9,8 +9,8 @@ void Controller::Run() const
 {
     
     std::cout << welcomeMsg << '\n';
-    int choice = 0;
-    while (choice != 7)
+    MenuOptions choice = MenuOptions::none;
+    while (choice != MenuOptions::exit)
     {
         choice = DisplayMenu();
         ExecuteChoice(choice);
@@ -122,9 +122,9 @@ int Controller::GetValidDay(int year, int month)
     }
 }
 
-void Controller::ExecuteChoice(const int& choice) const
+void Controller::ExecuteChoice(MenuOptions choice) const
 {
-    switch (const auto menuOption = static_cast<MenuOptions>(choice))
+    switch (choice)
     {
     case MenuOptions::calculateData:
         {
@@ -177,13 +177,13 @@ void Controller::ExecuteChoice(const int& choice) const
     }
 }
 
-int Controller::DisplayMenu() const
+Controller::MenuOptions Controller::DisplayMenu() const
 {
     for (std::size_t i = 1; i < menuStrings.size(); ++i)
     {
        std::cout << menuStrings[0] << i << " "<< menuStrings[i] << '\n';
     }
-    int inputValue = static_cast<int>(GetValidNumber());
+    MenuOptions inputValue = static_cast<MenuOptions>(GetValidNumber());
     return inputValue;
 }
 
