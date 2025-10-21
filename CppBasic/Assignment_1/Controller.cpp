@@ -163,7 +163,9 @@ void Controller::ExecuteChoice(MenuOptions choice) const
         }
     case MenuOptions::loadData:
         {
-            collectorPtr->ReadData();
+            std::cout << "If you want to keep previous Data: Press 0. \nIf you want to Delete previous data? Press 1. " << '\n';
+            bool deleteData = static_cast<bool>(GetValidNumber());
+            collectorPtr->ReadData(deleteData);
             break;
         }
     case MenuOptions::exit:

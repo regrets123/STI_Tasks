@@ -9,15 +9,14 @@ public:
 
     DataCollector (std::shared_ptr<std::map<time_t ,float>> collection) : dataCollection(collection)
     {
-        ReadData();
     }
     std::shared_ptr<std::map<time_t ,float>> dataCollection;
-    void Initialize();
+    void Initialize() const;
     void AddData();
-    void GetManualTime(int iterations);
+    void GetManualTime(int iterations) const;
     void GetAutoTime(int iterations);
-    void GenerateRandomData();
-    void ReadData() const;
+    void GenerateRandomData() const;
+    void ReadData(bool clearPrevious) const;
     void SaveData() const;
     std::shared_ptr<std::map<time_t ,float>> GetData() {return dataCollection;}
     

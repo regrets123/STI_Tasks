@@ -1,11 +1,13 @@
 #include <chrono>
+#include <fstream>
+#include <sstream>
 #include <iostream>
 #include <random>
 #include "DataCollector.h"
 #include "Controller.h"
 
 
-void DataCollector::Initialize()
+void DataCollector::Initialize() const
 {
     dataCollection->clear();
 }
@@ -19,7 +21,7 @@ void DataCollector::AddData()
     manualTime ? GetManualTime(dataIterations) : GetAutoTime(dataIterations);
 }
 
-void DataCollector::GetManualTime(int iterations)
+void DataCollector::GetManualTime(int iterations) const
 {
     std::map<long long,float> dataSets;
     for (int i = 0; i < iterations; i++)
@@ -47,7 +49,7 @@ void DataCollector::GetAutoTime(int iterations)
         dataCollection->insert(std::pair<long long,float>(now_t,input));
     }
 }
-void DataCollector::GenerateRandomData()
+void DataCollector::GenerateRandomData() const
 {
     std::cout << genDataMsg << '\n';
     int iterator =  static_cast<int>(Controller::GetValidNumber());
@@ -68,69 +70,84 @@ void DataCollector::GenerateRandomData()
     }
 }
 
-void DataCollector::ReadData() const
+void DataCollector::ReadData(bool clearPrevious) const
 {
-    //binary, cuz its small, and cool.
-    std::ifstream inFile("data.bin", std::ios::binary);
+    std::ifstream inFile("data.csv");
     
     if (!inFile.is_open()) {
-        std::cerr << "File doesn't exist or can't be opened" << '\n';
-        return; 
+        std::cerr << "Error: File doesn't exist or can't be opened" << '\n';
+        return;
     }
     
     inFile.seekg(0, std::ios::end);
     if (inFile.tellg() == 0) {
-        std::cerr << "File is empty" << '\n';
+        std::cerr << "Error: File is empty" << '\n';
         inFile.close();
         return;
     }
     inFile.seekg(0, std::ios::beg);
-    size_t size;
-    if (!inFile.read(reinterpret_cast<char*>(&size), sizeof(size))) { //casts as raw bytes
-        std::cerr << "Error reading size" << '\n';
+    if (clearPrevious)
+    {
+        dataCollection->clear();    
+    }
+    std::string line;
+    if (!std::getline(inFile, line)) {
+        std::cerr << "Error: Cannot read header" << '\n';
         inFile.close();
         return;
     }
-    
-    for (size_t i = 0; i < size; ++i) {
-        time_t timestamp;
-        float value;
+    int lineNumber = 1;
+    while (std::getline(inFile, line)) {
+        lineNumber++;
+        if (line.empty()) {
+            continue;
+        }
+        std::stringstream ss(line);
+        std::string timestampStr, valueStr;
         
-        if (!inFile.read(reinterpret_cast<char*>(&timestamp), sizeof(timestamp)) ||
-            !inFile.read(reinterpret_cast<char*>(&value), sizeof(value))) {
-            std::cerr << "Error reading data at index " << i << '\n';
-            break;
-            }
-        
-        (*dataCollection)[timestamp] = value;
+        if (!std::getline(ss, timestampStr, ',')) {
+            std::cerr << "Error: Cannot read timestamp at line " << lineNumber << '\n';
+            continue;
+        }
+        if (!std::getline(ss, valueStr, ',')) {
+            std::cerr << "Error: Cannot read value at line " << lineNumber << '\n';
+            continue;
+        }
+        try {
+            time_t timestamp = std::stoll(timestampStr);
+            float value = std::stof(valueStr);
+            (*dataCollection)[timestamp] = value;
+        }
+        catch (const std::invalid_argument& e) {
+            std::cerr << "Error: Invalid data format at line " << lineNumber << '\n';
+        }
+        catch (const std::out_of_range& e) {
+            std::cerr << "Error: Number out of range at line " << lineNumber << '\n';
+        }
     }
-    
     inFile.close();
 }
 
 void DataCollector::SaveData() const
 {
-    std::ofstream outFile("data.bin", std::ios::binary);
+    std::ofstream outFile("data.csv");
     
     if (!outFile.is_open()) {
         std::cerr << "Error: Cannot open file for writing" << '\n';
         return;
     }
     
-    size_t size = dataCollection->size();
-    if (!outFile.write(reinterpret_cast<const char*>(&size), sizeof(size))) {
-        std::cerr << "Error: Failed to write size" << '\n';
+    if (!(outFile << "timestamp,value\n")) {
+        std::cerr << "Error: Failed to write header" << '\n';
         outFile.close();
         return;
     }
-    
     for (const auto& pair : *dataCollection) {
-        if (!outFile.write(reinterpret_cast<const char*>(&pair.first), sizeof(pair.first)) ||
-            !outFile.write(reinterpret_cast<const char*>(&pair.second), sizeof(pair.second))) {
+        if (!(outFile << pair.first << "," << pair.second << "\n")) {
             std::cerr << "Error: Failed to write data" << '\n';
             outFile.close();
             return;
-            }
+        }
     }
     outFile.close();
 }
