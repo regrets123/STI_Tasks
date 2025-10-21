@@ -16,7 +16,7 @@ void DataAnalyser::CalculateData(const Container& dataCol) const
         CalcMax(dataSet, data.MaxValue);
         
         std::tm localTime = {};
-        time_t timeValue = static_cast<time_t>(dataSet.first);
+        time_t timeValue = static_cast<time_t>(dataSet.first);  // Convert long long to time_t
         localtime_s(&localTime, &timeValue);
         std::cout << std::put_time(&localTime, formatArg) << " " << dataSet.second << '\n';
     }

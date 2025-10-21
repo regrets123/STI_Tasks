@@ -1,5 +1,6 @@
 #pragma once
 #include <map>
+#include <fstream>
 
 class DataCollector
 {
@@ -8,7 +9,7 @@ public:
 
     DataCollector (std::shared_ptr<std::map<time_t ,float>> collection) : dataCollection(collection)
     {
-        
+        ReadData();
     }
     std::shared_ptr<std::map<time_t ,float>> dataCollection;
     void Initialize();
@@ -16,6 +17,8 @@ public:
     void GetManualTime(int iterations);
     void GetAutoTime(int iterations);
     void GenerateRandomData();
+    void ReadData() const;
+    void SaveData() const;
     std::shared_ptr<std::map<time_t ,float>> GetData() {return dataCollection;}
     
 private:

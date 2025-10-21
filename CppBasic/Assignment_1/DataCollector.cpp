@@ -67,3 +67,65 @@ void DataCollector::GenerateRandomData()
         dataCollection->insert(tempPair);
     }
 }
+
+void DataCollector::ReadData() const
+{
+    std::ifstream inFile("data.bin", std::ios::binary);
+    
+    if (!inFile.is_open()) {
+        std::cerr << "File doesn't exist or can't be opened" << '\n';
+        return; 
+    }
+    
+    inFile.seekg(0, std::ios::end);
+    if (inFile.tellg() == 0) {
+        std::cerr << "File is empty" << '\n';
+        inFile.close();
+        return;
+    }
+    inFile.seekg(0, std::ios::beg);
+    
+    dataCollection->clear();
+    
+    size_t size;
+    if (!inFile.read(reinterpret_cast<char*>(&size), sizeof(size))) {
+        std::cerr << "Error reading size" << '\n';
+        inFile.close();
+        return;
+    }
+    
+    for (size_t i = 0; i < size; ++i) {
+        time_t timestamp;
+        float value;
+        
+        if (!inFile.read(reinterpret_cast<char*>(&timestamp), sizeof(timestamp)) ||
+            !inFile.read(reinterpret_cast<char*>(&value), sizeof(value))) {
+            std::cerr << "Error reading data at index " << i << '\n';
+            break;
+            }
+        
+        (*dataCollection)[timestamp] = value;
+    }
+    
+    inFile.close();
+}
+
+void DataCollector::SaveData() const
+{
+    std::ofstream outFile("data.bin", std::ios::binary);
+    
+    if (!outFile.is_open()) {
+        std::cerr << "Error opening file for writing" << '\n';
+        return;
+    }
+    
+    size_t size = dataCollection->size();
+    outFile.write(reinterpret_cast<const char*>(&size), sizeof(size));
+    
+    for (const auto& pair : *dataCollection) {
+        outFile.write(reinterpret_cast<const char*>(&pair.first), sizeof(pair.first));
+        outFile.write(reinterpret_cast<const char*>(&pair.second), sizeof(pair.second));
+    }
+    
+    outFile.close();
+}

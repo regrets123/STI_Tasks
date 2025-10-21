@@ -1,10 +1,11 @@
 #include "Controller.h"
 
 #include <chrono>
+#include <utility>
 
 #include "DataAnalyser.h"
 
-void Controller::Run()
+void Controller::Run() const
 {
     
     std::cout << welcomeMsg << '\n';
@@ -68,7 +69,7 @@ int Controller::GetValidMonth(int year)
     {
         uint8_t month = static_cast<uint8_t>(GetValidNumber());
         
-        if (year == currentYear && month > currentMonth)
+        if (year == currentYear && std::cmp_greater(month, currentMonth))
         {
             std::cout << "Cannot enter a future month. Input a month between 1 and " << currentMonth << '\n';
             continue;
@@ -112,8 +113,8 @@ int Controller::GetValidDay(int year, int month)
     
     while (true)
     {
-        uint8_t day = static_cast<uint8_t>(GetValidNumber());
-        if (day > 0 && day <= maxDay)
+        const uint8_t day = static_cast<uint8_t>(GetValidNumber());
+        if (day > 0 && std::cmp_less_equal(day, maxDay))
         {
             return day;
         }
@@ -121,10 +122,9 @@ int Controller::GetValidDay(int year, int month)
     }
 }
 
-void Controller::ExecuteChoice(const int& choice)
+void Controller::ExecuteChoice(const int& choice) const
 {
-    const auto menuOption = static_cast<MenuOptions>(choice);
-    switch (menuOption)
+    switch (const auto menuOption = static_cast<MenuOptions>(choice))
     {
     case MenuOptions::calculateData:
         {
@@ -154,6 +154,16 @@ void Controller::ExecuteChoice(const int& choice)
     case MenuOptions::sortData:
         {
             dataPtr->SortData();
+            break;
+        }
+    case MenuOptions::saveData:
+        {
+            collectorPtr->SaveData();
+            break;
+        }
+    case MenuOptions::loadData:
+        {
+            collectorPtr->ReadData();
             break;
         }
     case MenuOptions::exit:
@@ -193,8 +203,9 @@ std::tm Controller::InputDate()
     startTm.tm_hour = 0;
     startTm.tm_min = 0;
     startTm.tm_sec = 0;
-    startTm.tm_isdst = -1;  
-    mktime(&startTm); 
+    startTm.tm_isdst = -1;
+    const auto mkTime = mktime;
+    mkTime(&startTm); 
     return startTm;
 }
 
