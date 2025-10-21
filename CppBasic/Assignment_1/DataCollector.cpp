@@ -70,6 +70,7 @@ void DataCollector::GenerateRandomData()
 
 void DataCollector::ReadData() const
 {
+    //binary, cuz its small, and cool.
     std::ifstream inFile("data.bin", std::ios::binary);
     
     if (!inFile.is_open()) {
@@ -85,7 +86,7 @@ void DataCollector::ReadData() const
     }
     inFile.seekg(0, std::ios::beg);
     size_t size;
-    if (!inFile.read(reinterpret_cast<char*>(&size), sizeof(size))) {
+    if (!inFile.read(reinterpret_cast<char*>(&size), sizeof(size))) { //casts as raw bytes
         std::cerr << "Error reading size" << '\n';
         inFile.close();
         return;
