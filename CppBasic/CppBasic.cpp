@@ -7,4 +7,5 @@ int main(int argc, char* argv[])
     auto analyser = std::make_unique<DataAnalyser>(data);
     auto controller = std::make_unique<Controller>(std::move(analyser), std::move(dataCollector));
     controller->Run();
+    
 }

@@ -115,17 +115,24 @@ void DataCollector::SaveData() const
     std::ofstream outFile("data.bin", std::ios::binary);
     
     if (!outFile.is_open()) {
-        std::cerr << "Error opening file for writing" << '\n';
+        std::cerr << "Error: Cannot open file for writing" << '\n';
         return;
     }
     
     size_t size = dataCollection->size();
-    outFile.write(reinterpret_cast<const char*>(&size), sizeof(size));
-    
-    for (const auto& pair : *dataCollection) {
-        outFile.write(reinterpret_cast<const char*>(&pair.first), sizeof(pair.first));
-        outFile.write(reinterpret_cast<const char*>(&pair.second), sizeof(pair.second));
+    if (!outFile.write(reinterpret_cast<const char*>(&size), sizeof(size))) {
+        std::cerr << "Error: Failed to write size" << '\n';
+        outFile.close();
+        return;
     }
     
+    for (const auto& pair : *dataCollection) {
+        if (!outFile.write(reinterpret_cast<const char*>(&pair.first), sizeof(pair.first)) ||
+            !outFile.write(reinterpret_cast<const char*>(&pair.second), sizeof(pair.second))) {
+            std::cerr << "Error: Failed to write data" << '\n';
+            outFile.close();
+            return;
+            }
+    }
     outFile.close();
 }
