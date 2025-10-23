@@ -57,16 +57,18 @@ void DataCollector::GenerateRandomData() const
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> hour_dist(0, 23);
     std::uniform_int_distribution<> minute_dist(0, 59);
-    std::uniform_real_distribution<float> dist(-305, -150); //Saturn's moon is very cold. 
+    std::uniform_real_distribution<float> dist(-305, -150); //Saturn's moon is very cold.
+    auto now = std::chrono::system_clock::now();
+    
     for (int i = 0; i < iterator; i++)
     {
-        auto now = std::chrono::system_clock::now();
+
         auto timestamp = now - std::chrono::hours(24 * i) 
                       - std::chrono::hours(hour_dist(gen))
                       - std::chrono::minutes(minute_dist(gen));
         time_t time_point = std::chrono::system_clock::to_time_t(timestamp);
         std::pair<time_t,float> tempPair = std::make_pair(time_point,  dist(gen));
-        dataCollection->insert(tempPair);
+        dataCollection->emplace(tempPair);
     }
 }
 

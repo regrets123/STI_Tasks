@@ -17,6 +17,7 @@ public:
     void SortData();    
     void LookupValue();
     void LookupDate();
+    void CompareBuffer();
     std::vector<std::pair<time_t, float>>& ByTimeDescending();
     std::vector<std::pair<time_t, float>>& ByValueAscending();
     std::vector<std::pair<time_t, float>>& ByValueDescending();

@@ -69,6 +69,7 @@ void DataAnalyser::SortData()
 
 std::vector<std::pair<time_t, float>>& DataAnalyser::ByValueAscending()
 {
+    CompareBuffer();
     sortBuffer.assign(dataCollection->begin(), dataCollection->end());
     std::sort(sortBuffer.begin(), sortBuffer.end(), 
         [](const auto& a, const auto& b) { return a.second < b.second; });
@@ -77,6 +78,7 @@ std::vector<std::pair<time_t, float>>& DataAnalyser::ByValueAscending()
 
 std::vector<std::pair<time_t, float>>& DataAnalyser::ByValueDescending()
 {
+    CompareBuffer();
     sortBuffer.assign(dataCollection->begin(), dataCollection->end());
     std::sort(sortBuffer.begin(), sortBuffer.end(), 
         [](const auto& a, const auto& b) { return a.second > b.second; });
@@ -132,9 +134,17 @@ void DataAnalyser::LookupDate()
         std::cout << "No data found for this date" << '\n';
     }
 }
+void DataAnalyser::CompareBuffer()
+{
+    if (sortBuffer.capacity() < dataCollection->size())
+    {
+        sortBuffer.reserve(dataCollection->size());
+    }
+}
 
 std::vector<std::pair<time_t, float>>& DataAnalyser::ByTimeDescending()
 {
+    CompareBuffer();
     sortBuffer.assign(dataCollection->rbegin(), dataCollection->rend());
     return sortBuffer;
 }
