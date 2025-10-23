@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <iomanip>
+#include <iostream>
 #include "Controller.h"
 
 template<typename Container> 
@@ -88,17 +89,17 @@ std::vector<std::pair<time_t, float>>& DataAnalyser::ByValueDescending()
 void DataAnalyser::LookupValue()
 {
     std::cout << findTemperatureMsg << '\n';
-    float accuarcy = static_cast<float>(Controller::GetValidNumber());
+    float accuracy = static_cast<float>(Controller::GetValidNumber());
     float valueToFind = static_cast<float>(Controller::GetValidNumber());
     bool found = false;
-    for (const auto& pair : *dataCollection) {
+    for (const auto& timeTValuePair : *dataCollection) {
 
-        if (std::abs(pair.second - valueToFind) < accuarcy )
+        if (std::abs(timeTValuePair.second - valueToFind) < accuracy )
         {
             found = true;
             std::tm localTime;
-            localtime_s(&localTime, &pair.first);
-            std::cout << "Found value at date: " <<std::put_time(&localTime, formatArg) << " with the temp: " <<pair.second << '\n';
+            localtime_s(&localTime, &timeTValuePair.first);
+            std::cout << "Found value at date: " <<std::put_time(&localTime, formatArg) << " with the temp: " <<timeTValuePair.second << '\n';
         }
     }
     if (!found)

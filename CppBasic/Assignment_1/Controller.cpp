@@ -1,9 +1,8 @@
-#include "Controller.h"
-
 #include <chrono>
 #include <utility>
-
 #include "DataAnalyser.h"
+#include <iostream>
+#include "Controller.h"
 
 void Controller::Run() const
 {

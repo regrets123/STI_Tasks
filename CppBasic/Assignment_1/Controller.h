@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 #include <array>
 #include "DataAnalyser.h"
 #include "DataCollector.h"
