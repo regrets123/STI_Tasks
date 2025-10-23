@@ -43,23 +43,26 @@ Input: 3 to generate mock data.
 Input: 4 to check for a specific temperature.
 Input: 5 to check the data at a specific date.
 Input: 6 to sort the data.
-Input: 7 to exit the module.
+Input: 7 to Save the readings.
+Input: 8 to Load previous readings.
+Input: 9 to exit the module.
 
 ```
 🧱 Tekniska val och motivering
 
-Jag delade upp programemt i en överordnande kontroller för att hantera flödet av logiken.
+Jag delade upp programmet i en överordnande kontroller för att hantera flödet av logiken.
 En DataCollector klass för att hantera inmatning och en DataAnalyser klass för att analysera datan.
 
 Jag använde Std:Map då datan ska sorteras, och den alltså sorteras automatiskt vid inmatning.
-Map är fylld med std::pairs av std::time_t och float, där time_t representerar tidpunkten när mätningen gjordes och float representerar temperaturen i celcius.
+Map är fylld med std::pairs av std::time_t och float, där time_t representerar tidpunkten när mätningen gjordes och float representerar temperaturen i Celsius.
 För att kunna sortera datan inte bara via KEY utan även value har jag en std::vektor buffer som jag återanvänder.
-Jag avänder time_t för att map själv ska kunna sortera den då den är en long long, och konverterar till annat format för att printa ut datumet i en mer läsbar form.
+Jag använder time_t för att map själv ska kunna sortera den då den är en long long, och konverterar till annat format för att printa ut datumet i en mer läsbar form.
 Vid data-analysering använder jag en Results struct då det blir för många variabler att skicka mellan funktioner.
-Många metoder ska bara läsa datan och inte skriva in ny data, tex via dataanlyserings scriptet, då är de const.
+Många metoder ska bara läsa datan och inte skriva in ny data, tex via dataanalyserings scriptet, då är de const.
 
-Jag kontrollerar att inmatningen bara är siffror via Static GetValidNumber() och har ytterliggare verifiering via GetValidYear() GetValidMonth() och GetValidDay().
+Jag kontrollerar att inmatningen bara är siffror via Static GetValidNumber() och har ytterligare verifiering via GetValidYear() GetValidMonth() och GetValidDay().
 Där kontrolleras med instruktioner att det är före 1970, innan nuvarande datum, och tar hänsyn för skottår kring februari för antal dagar i månaden.
+Har lagt till Spara och Inläsning från csv fil som en provisorisk databas. Ursprungligen gjorde jag det som binär fil men det var inte inkluderat i uppgiftsbeskrivningen så skrev om det.
 Jag hanterar inte tomma listor eller filfel, men har inte fått några errors när jag testat med tom lista.
 Försökt använda pointers så mycket som möjligt för att koden ska vara så snabb som möjligt.
 
