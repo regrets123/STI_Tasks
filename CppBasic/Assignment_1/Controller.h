@@ -1,3 +1,4 @@
+/*
 #pragma once
 #include <array>
 #include "DataAnalyser.h"
@@ -39,3 +40,4 @@ private:
     std::unique_ptr<DataAnalyser> dataPtr;
     std::unique_ptr<DataCollector> collectorPtr;
 };
+*/

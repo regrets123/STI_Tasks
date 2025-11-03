@@ -1,4 +1,6 @@
+/*
 #pragma once
+#include <cfloat>
 #include <map>
 #include <memory>
 #include <string>
@@ -62,3 +64,4 @@ private:
     const char* cantFindMsg = "The data set does not contain the data you are looking for.";
     const char* formatArg = "%Y-%m-%d %H:%M:%S";
 };
+*/

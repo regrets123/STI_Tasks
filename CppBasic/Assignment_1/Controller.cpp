@@ -1,3 +1,4 @@
+/*
 #include <chrono>
 #include <utility>
 #include "DataAnalyser.h"
@@ -68,12 +69,12 @@ int Controller::GetValidMonth(int year)
     {
         uint8_t month = static_cast<uint8_t>(GetValidNumber());
         
-        if (year == currentYear && std::cmp_greater(month, currentMonth))
+        if (year == currentYear && month > currentMonth)
         {
             std::cout << "Cannot enter a future month. Input a month between 1 and " << currentMonth << '\n';
             continue;
         }
-        
+
         if (month > 0 && month < 13)
         {
             return month;
@@ -113,7 +114,7 @@ int Controller::GetValidDay(int year, int month)
     while (true)
     {
         const uint8_t day = static_cast<uint8_t>(GetValidNumber());
-        if (day > 0 && std::cmp_less_equal(day, maxDay))
+        if (day > 0 && day <= maxDay)
         {
             return day;
         }
@@ -209,4 +210,5 @@ std::tm Controller::InputDate()
     mkTime(&startTm); 
     return startTm;
 }
+*/
 

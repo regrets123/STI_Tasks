@@ -1,10 +1,11 @@
+/*
 #pragma once
 #include <map>
 #include <fstream>
 
 class DataCollector
 {
-    
+
 public:
 
     DataCollector (std::shared_ptr<std::map<time_t ,float>> collection) : dataCollection(collection)
@@ -19,7 +20,7 @@ public:
     void ReadData(bool clearPrevious) const;
     void SaveData() const;
     std::shared_ptr<std::map<time_t ,float>> GetData() {return dataCollection;}
-    
+
 private:
     const char* amountMsg = "Enter the amount of data pairs of time <-> value you want to input:";
     const char* valueMsg = "Enter value number:";
@@ -29,3 +30,4 @@ private:
     const char* manualTimeMsg =  "Enter 1 to input time manually after Jan 1 1970 UTC:";
 
 };
+*/

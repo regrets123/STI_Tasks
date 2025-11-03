@@ -1,11 +1,14 @@
-#include "Assignment_1/Controller.h"
+#include "UserInterface.h"
+#include "Storage.h"
+#include <vector>
+#include <memory>
 
-int main(int argc, char* argv[])
-{
-    auto data = std::make_shared<std::map<time_t, float>>();
-    auto dataCollector = std::make_unique<DataCollector>(data);
-    auto analyser = std::make_unique<DataAnalyser>(data);
-    auto controller = std::make_unique<Controller>(std::move(analyser), std::move(dataCollector));
-    controller->Run();
-    
+int main() {
+    Storage storage;
+    std::vector<std::shared_ptr<Sensor>> sensors;
+    //sensors.push_back(std::make_shared<Sensor>(...));
+
+    UserInterface ui(sensors, storage);
+    ui.run();
+    return 0;
 }
