@@ -8,8 +8,10 @@ enum SensorType { none, celsius, humidity, maxNum};
 class Sensor
 {
 public:
-     float read();
-     SensorType getType();
+     Sensor(SensorType type, const std::string& name, float minRange, float maxRange);
+     [[nodiscard]] float read() const; //compiler yells if the return variable isn't used.
+     [[nodiscard]] std::string getName() { return name;}
+     [[nodiscard]] SensorType getType() const;
 private:
      std::string name;
      SensorType type = none;

@@ -1,106 +1,27 @@
-#include "Storage.h"
-#include <fstream>
 #include <sstream>
 #include <iomanip>
 #include <ctime>
-#include <iostream>
+#include <chrono>
+#include <fstream>
 #include <cmath>
-#include <map>
-
 #include "Utils.h"
+#include "Storage.h"
 
-void Storage::addMeasurement(const Measurement& m) {
-    data.push_back(m);
+std::vector<Measurement> Storage::addMeasurements() {
+    std::vector<Measurement> measurements;
+    for (const auto& sensor: *sensors) {
+        Measurement newReading (sensor->getType()
+            ,sensor->read()
+            ,sensor->getName()
+            , std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
+        measurementData->push_back(newReading);
+        measurements.push_back(newReading);
+    }
+    return measurements;
 }
 
-void Storage::analyseData() {
-    std::cout << "\n========================================\n";
-    std::cout << "       STATISTICAL ANALYSIS\n";
-    std::cout << "========================================\n";
+void Storage::analyseData() const {
 
-    if (data.empty()) {
-        std::cout << "No data available for analysis!\n";
-        return;
-    }
-
-    // Group measurements by sensor type
-    std::map<SensorType, std::vector<float>> groupedData;
-
-    for (const auto& measurement : data) {
-        if (measurement.type != SensorType::none) {
-            groupedData[measurement.type].push_back(measurement.value);
-        }
-    }
-
-    // Analyze each sensor type
-    for (const auto& [sensorType, values] : groupedData) {
-        std::cout << "\n" << Utils::sensorTypeToString(sensorType) << " ("
-                  << Utils::getUnitString(sensorType) << ")\n";
-        std::cout << std::string(40, '-') << "\n";
-
-        size_t count = values.size();
-        float mean = Utils::calculateMean(values);
-        float stdDev = Utils::calculateStdDev(values, mean);
-        float minVal = Utils::findMin(values);
-        float maxVal = Utils::findMax(values);
-
-        // Print results with nice formatting
-        std::cout << std::left << std::setw(25) << "Number of measurements:"
-                  << count << "\n";
-
-        std::cout << std::left << std::setw(25) << "Mean:"
-                  << std::fixed << std::setprecision(2) << mean
-                  << " " << Utils::getUnitString(sensorType) << "\n";
-
-        std::cout << std::left << std::setw(25) << "Standard deviation:"
-                  << std::fixed << std::setprecision(2) << stdDev
-                  << " " << Utils::getUnitString(sensorType) << "\n";
-
-        std::cout << std::left << std::setw(25) << "Minimum value:"
-                  << std::fixed << std::setprecision(2) << minVal
-                  << " " << Utils::getUnitString(sensorType) << "\n";
-
-        std::cout << std::left << std::setw(25) << "Maximum value:"
-                  << std::fixed << std::setprecision(2) << maxVal
-                  << " " << Utils::getUnitString(sensorType) << "\n";
-    }
-
-    std::cout << "\n========================================\n";
-    std::cout << "Total measurements: " << data.size() << "\n";
-    std::cout << "========================================\n";
-}
-
-void Storage::printAll() {
-    std::cout << "\n========================================\n";
-    std::cout << "       ALL MEASUREMENTS\n";
-    std::cout << "========================================\n";
-
-    if (data.empty()) {
-        std::cout << "No measurements available!\n";
-        return;
-    }
-
-    std::cout << std::left
-              << std::setw(20) << "Date/Time"
-              << std::setw(18) << "Sensor"
-              << std::setw(12) << "Value"
-              << std::setw(8) << "Unit" << "\n";
-    std::cout << std::string(58, '-') << "\n";
-
-    for (const auto& m : data) {
-        char timeBuffer[20];
-        struct tm* timeInfo = localtime(&m.time);
-        strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M", timeInfo);
-
-        std::cout << std::left
-                  << std::setw(20) << timeBuffer
-                  << std::setw(18) << m.name
-                  << std::setw(12) << std::fixed << std::setprecision(1) << m.value
-                  << std::setw(8) << Utils::getUnitString(m.type) << "\n";
-    }
-
-    std::cout << "\nTotal: " << data.size() << " measurements\n";
-    std::cout << "========================================\n";
 }
 
 bool Storage::saveToFile(const std::string& filename) const {
@@ -110,7 +31,7 @@ bool Storage::saveToFile(const std::string& filename) const {
         return false;
     }
 
-    for (const auto& m : data) {
+    for (const auto& m : *measurementData) {
         char timeBuffer[20];
         struct tm* timeInfo = localtime(&m.time);
         strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M", timeInfo);
@@ -120,21 +41,17 @@ bool Storage::saveToFile(const std::string& filename) const {
              << std::fixed << std::setprecision(1) << m.value << ", "
              << Utils::getUnitString(m.type) << "\n";
     }
-
     file.close();
     return true;
 }
 
-bool Storage::loadFromFile(const std::string& filename) {
+bool Storage::loadFromFile(const std::string &filename) {
     std::ifstream file(filename);
-
     if (!file.is_open()) {
         return false;
     }
-
     int loadedCount = 0;
     std::string line;
-
     while (std::getline(file, line)) {
         std::stringstream ss(line);
         std::string dateStr, sensorName, valueStr, unit;
@@ -144,32 +61,31 @@ bool Storage::loadFromFile(const std::string& filename) {
             std::getline(ss, sensorName, ',') &&
             std::getline(ss, valueStr, ',') &&
             std::getline(ss, unit, ',')) {
-
-            // Trim whitespace
+            dateStr.erase(0, dateStr.find_first_not_of(" \t"));
+            dateStr.erase(dateStr.find_last_not_of(" \t") + 1);
             sensorName.erase(0, sensorName.find_first_not_of(" \t"));
             sensorName.erase(sensorName.find_last_not_of(" \t") + 1);
             valueStr.erase(0, valueStr.find_first_not_of(" \t"));
             valueStr.erase(valueStr.find_last_not_of(" \t") + 1);
-
             try {
                 float value = std::stof(valueStr);
+                std::tm tm = {};
+                int year, month, day, hour, minute;
 
-                // Determine sensor type from name
-                SensorType type = SensorType::none;
-                if (sensorName == "Temperature") {
-                    type = SensorType::celsius;
-                } else if (sensorName == "Humidity") {
-                    type = SensorType::humidity;
-                }
+                if (sscanf(dateStr.c_str(), "%d-%d-%d %d:%d",
+                           &year, &month, &day, &hour, &minute) == 5) {
+                    tm.tm_year = year - 1900; // Years since 1900
+                    tm.tm_mon = month - 1; // Months since January (0-11)
+                    tm.tm_mday = day;
+                    tm.tm_hour = hour;
+                    tm.tm_min = minute;
+                    tm.tm_sec = 0;
+                    tm.tm_isdst = -1; // Let mktime determine DST
+                    time_t timestamp = std::mktime(&tm);
 
-                if (type != SensorType::none) {
-                    Measurement m;
-                    m.type = type;
-                    m.value = value;
-                    m.name = sensorName;
-                    m.time = time(nullptr);
-
-                    data.push_back(m);
+                    auto type = static_cast<SensorType>(Utils::stringToSensorType(sensorName));
+                    Measurement m = Measurement(type, value, sensorName, timestamp);
+                    measurementData->push_back(m);
                     loadedCount++;
                 }
             } catch (...) {
@@ -177,19 +93,67 @@ bool Storage::loadFromFile(const std::string& filename) {
             }
         }
     }
-
     file.close();
     return loadedCount > 0;
 }
 
+Statistics Storage::calculateStatistics(const std::vector<Measurement> *dataToProcess) {
+    if (dataToProcess == nullptr || dataToProcess->empty()) {
+        return {0, 0.0f, 0.0f, 0.0f, 0.0f};
+    }
+
+    auto size = static_cast<uint8_t>(dataToProcess->size());
+    float sum = 0.0f;
+    float minValue = dataToProcess->at(0).value;
+    float maxValue = dataToProcess->at(0).value;
+
+    for (const auto& measurement : *dataToProcess) {
+        float val = measurement.value;
+        sum += val;
+
+        if (val < minValue) {
+            minValue = val;
+        }
+        if (val > maxValue) {
+            maxValue = val;
+        }
+    }
+    float average = sum / size;
+    float varianceSum = 0.0f;
+    for (const auto& measurement : *dataToProcess) {
+        float diff = measurement.value - average;
+        varianceSum += diff * diff;
+    }
+
+    float variance = varianceSum / size;
+    float stdDev = std::sqrt(variance);
+
+    return {size, average, minValue, maxValue, stdDev};
+}
+
 const std::vector<Measurement>& Storage::getAllMeasurements() const {
-    return data;
+    return *measurementData;
+}
+
+std::vector<Measurement> Storage::GetMeasuermentByType(SensorType type) {
+    std::vector<Measurement> filteredMeasurements;
+    filteredMeasurements.clear();
+    for (const auto& measurement : *measurementData) {
+       if (measurement.type == type) {
+           filteredMeasurements.push_back(measurement);
+       }
+    }
+    return filteredMeasurements;
 }
 
 bool Storage::isEmpty() const {
-    return data.empty();
+    return measurementData->empty();
 }
 
-size_t Storage::size() const {
-    return data.size();
+size_t Storage::measurementSize() const {
+    return measurementData->size();
+}
+
+size_t Storage::numberOfSensors() const {
+    return sensors->size();
 }

@@ -4,35 +4,29 @@
 
 #ifndef STI_TASKS_USERINTERFACE_H
 #define STI_TASKS_USERINTERFACE_H
+#include "Sensor.h"
 
-
-#include <vector>
-#include <string>
-#include <memory>
-
-// Forward declarations
-struct Measurement;
-class Sensor;
+struct Statistics;
 class Storage;
 
 class UserInterface {
 public:
-    UserInterface(std::vector<std::shared_ptr<Sensor>>& sensors,
-                  Storage& storage);
-    void run();
+    explicit UserInterface(Storage* storage);
+    void run() const;
 
 private:
-    void readNewMeasurements();
-    void showStatisticsPerSensor();
-    void showAllMeasurements();
-    void saveMeasurementsToFile();
-    void loadMeasurementsFromFile();
 
-    void displayMenu();
-    int getMenuChoice();
-    void clearInputBuffer();
-    std::vector<std::shared_ptr<Sensor>>& sensors;
-    Storage& storage;
+    static void showStatisticsPerSensor(SensorType type, Statistics stats);
+    static void displayMenu();
+    static int getMenuChoice();
+
+    void readNewMeasurements() const;
+    void showAllMeasurements() const;
+    void saveMeasurementsToFile() const;
+    void loadMeasurementsFromFile() const;
+
+
+    Storage* storage;
 };
 
 

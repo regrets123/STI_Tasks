@@ -3,29 +3,32 @@
 #include "Measurement.h"
 #include <iostream>
 #include <iomanip>
-#include <limits>
 #include <ctime>
-
 #include "Utils.h"
 
-UserInterface::UserInterface(std::vector<std::shared_ptr<Sensor>>& sensors,
-                             Storage& storage)
-    : sensors(sensors), storage(storage) {}
+UserInterface::UserInterface(Storage* storage)
+    : storage(storage) {}
 
-void UserInterface::run() {
+void UserInterface::run() const {
     bool running = true;
     
     while (running) {
         displayMenu();
-        int choice = getMenuChoice();
-        
-        switch (choice) {
+
+        switch (getMenuChoice()) {
             case 1:
                 readNewMeasurements();
                 break;
-            case 2:
-                showStatisticsPerSensor();
+            case 2: {
+                std::cout << "\nStatistics per sensor\n";
+                std::cout << "Input 1 for Celsius, 2 for Humidity. \n";
+                auto type = static_cast<SensorType>(Utils::getValidInput(1,2));
+                std::vector<Measurement> measurements = storage->GetMeasuermentByType(type);
+                Statistics newData = Storage::calculateStatistics(&measurements);
+                showStatisticsPerSensor(type, newData);
                 break;
+            }
+
             case 3:
                 showAllMeasurements();
                 break;
@@ -68,96 +71,45 @@ int UserInterface::getMenuChoice() {
     return Utils::getValidInput(1, 6);
 }
 
-void UserInterface::readNewMeasurements() {
+void UserInterface::readNewMeasurements() const {
     std::cout << "\nReading new measurements\n";
-    
-    if (sensors.empty()) {
-        std::cout << "No sensors available!\n";
-        return;
+    const std::vector<Measurement> newMeasurements = storage->addMeasurements();
+    for (const auto& measurement : newMeasurements) {
+        char timeBuffer[20];
+        std::strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M",
+                      std::localtime(&measurement.time));
+
+        std::cout << timeBuffer << ", "
+                  << Utils::sensorTypeToString(measurement.type) << ", "
+                  << measurement.value << ", "
+                  << Utils::getUnitString(measurement.type) << "\n";
     }
-    
-    time_t currentTime = time(nullptr);
-    
-    for (const auto& sensor : sensors) {
-        float value = sensor->read();
-        SensorType type = sensor->getType();
-        
-        Measurement m;
-        m.type = type;
-        m.value = value;
-        m.name = Utils::sensorTypeToString(type);
-        m.time = currentTime;
-        
-        storage.addMeasurement(m);
-        
-        std::cout << "  " << m.name << ": " << value << " " 
-                  << Utils::getUnitString(type) << "\n";
-    }
-    
-    std::cout << "\nTotal " << sensors.size() << " measurements read.\n";
 }
 
-void UserInterface::showStatisticsPerSensor() {
+void UserInterface::showStatisticsPerSensor(SensorType type, Statistics stats) {
     std::cout << "\nStatistics per sensor\n";
-    
-    if (storage.isEmpty()) {
-        std::cout << "No measurements available!\n";
-        return;
-    }
-    
-    const auto& measurements = storage.getAllMeasurements();
-    
-    // Group measurements by sensor type
-    for (int sensorType = 1; sensorType < static_cast<int>(SensorType::maxNum); ++sensorType) {
-        std::vector<float> values;
-        
-        for (const auto& m : measurements) {
-            if (static_cast<int>(m.type) == sensorType) {
-                values.push_back(m.value);
-            }
-        }
-        
-        if (!values.empty()) {
-            float sum = 0;
-            float minVal = values[0];
-            float maxVal = values[0];
-            
-            for (float val : values) {
-                sum += val;
-                if (val < minVal) minVal = val;
-                if (val > maxVal) maxVal = val;
-            }
-            
-            float average = sum / values.size();
-            
-            std::cout << "\n" << Utils::sensorTypeToString(sensorType) << ":\n";
-            std::cout << "  Number of measurements: " << values.size() << "\n";
-            std::cout << "  Average: " << std::fixed << std::setprecision(2) 
-                      << average << " " << Utils::getUnitString(sensorType) << "\n";
-            std::cout << "  Minimum: " << minVal << " " 
-                      << Utils::getUnitString(sensorType) << "\n";
-            std::cout << "  Maximum: " << maxVal << " " 
-                      << Utils::getUnitString(sensorType) << "\n";
-        }
-    }
+        std::cout << "\nSensor Type " << type << ":\n";
+        std::cout << "  Size: " << static_cast<int>(stats.size) << "\n";
+        std::cout << "  Average: " << stats.average << "\n";
+        std::cout << "  Min Value: " << stats.minValue << "\n";
+        std::cout << "  Max Value: " << stats.maxValue << "\n";
+        std::cout << "  Std Dev: " << stats.stdDev << "\n";
+
 }
 
-void UserInterface::showAllMeasurements() {
+void UserInterface::showAllMeasurements() const {
     std::cout << "\nAll measurements\n";
     
-    if (storage.isEmpty()) {
+    if (storage->isEmpty()) {
         std::cout << "No measurements available!\n";
         return;
     }
-    
-    const auto& measurements = storage.getAllMeasurements();
-    
+    const auto& measurements = storage->getAllMeasurements();
     std::cout << std::left << std::setw(20) << "Date/Time" 
               << std::setw(20) << "Sensor" 
               << std::setw(10) << "Value" 
               << std::setw(8) << "Unit" << "\n";
     std::cout << std::string(58, '-') << "\n";
-    
     for (const auto& m : measurements) {
         char timeBuffer[20];
         struct tm* timeInfo = localtime(&m.time);
@@ -169,51 +121,35 @@ void UserInterface::showAllMeasurements() {
                   << std::setw(8) << Utils::getUnitString(static_cast<int>(m.type)) << "\n";
     }
     
-    std::cout << "\nTotal: " << storage.size() << " measurements\n";
+    std::cout << "\nTotal: " << storage->measurementSize() << " measurements\n";
 }
 
-void UserInterface::saveMeasurementsToFile() {
+void UserInterface::saveMeasurementsToFile() const {
     std::cout << "\nSave measurements to file\n";
     
-    if (storage.isEmpty()) {
+    if (storage->measurementSize() < 1 ) {
         std::cout << "No measurements to save!\n";
         return;
     }
-    
     std::string filename;
     std::cout << "Enter filename (e.g. measurements.csv): ";
     std::getline(std::cin, filename);
-    
-    if (filename.empty()) {
-        filename = "measurements.csv";
-    }
-    
-    if (storage.saveToFile(filename)) {
-        std::cout << "Saved " << storage.size() << " measurements to " << filename << "\n";
-    } else {
-        std::cout << "Error: Could not save to file!\n";
-    }
+    if (storage->saveToFile(filename))
+        std::cout << "File successfully saved!\n";
+    else
+        std::cout << "File could not be saved!\n";
 }
 
-void UserInterface::loadMeasurementsFromFile() {
+void UserInterface::loadMeasurementsFromFile() const {
     std::cout << "\nLoad measurements from file\n";
     
     std::string filename;
     std::cout << "Enter filename (e.g. measurements.csv): ";
     std::getline(std::cin, filename);
-    
-    size_t beforeCount = storage.size();
-    
-    if (storage.loadFromFile(filename)) {
-        size_t loadedCount = storage.size() - beforeCount;
-        std::cout << "Loaded " << loadedCount << " measurements from " << filename << "\n";
-    } else {
-        std::cout << "Error: Could not load from file!\n";
+    if (storage->loadFromFile(filename))
+        std::cout << "File successfully loaded!\n";
+    else {
+        std::cout << "File could not be loaded!\n";
     }
 }
 
-
-void UserInterface::clearInputBuffer() {
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-}

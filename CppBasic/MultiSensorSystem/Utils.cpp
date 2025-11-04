@@ -4,7 +4,7 @@
 #include <string>
 
 
-int Utils::getValidInput(int min, int max) {
+int Utils:: getValidInput(int min, int max) {
     std::string input;
     int choice;
 
@@ -62,12 +62,15 @@ int Utils::stringToSensorType(const std::string& typeStr) {
 std::string Utils::getUnitString(int type) {
     switch (type) {
         case static_cast<int>(celsius):
-            return "°C";
+            return "Celsius";
         case static_cast<int>(humidity):
             return "%";
-        default:
-            return "";
     }
+}
+
+void Utils::clearInputBuffer() {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 float Utils::calculateMean(const std::vector<float>& values) {
@@ -91,28 +94,4 @@ float Utils::calculateStdDev(const std::vector<float>& values, float mean) {
 
     // Sample standard deviation (n-1)
     return std::sqrt(sumSquaredDiff / (values.size() - 1));
-}
-
-float Utils::findMin(const std::vector<float>& values) {
-    if (values.empty()) return 0.0f;
-
-    float minVal = values[0];
-    for (float value : values) {
-        if (value < minVal) {
-            minVal = value;
-        }
-    }
-    return minVal;
-}
-
-float Utils::findMax(const std::vector<float>& values) {
-    if (values.empty()) return 0.0f;
-
-    float maxVal = values[0];
-    for (float value : values) {
-        if (value > maxVal) {
-            maxVal = value;
-        }
-    }
-    return maxVal;
 }
