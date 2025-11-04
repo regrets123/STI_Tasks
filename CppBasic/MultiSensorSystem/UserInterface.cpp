@@ -118,7 +118,7 @@ void UserInterface::showAllMeasurements() const {
         std::cout << std::left << std::setw(20) << timeBuffer
                   << std::setw(20) << m.name
                   << std::setw(10) << std::fixed << std::setprecision(1) << m.value
-                  << std::setw(8) << Utils::getUnitString(static_cast<int>(m.type)) << "\n";
+                  << std::setw(8) << Utils::getUnitString(m.type) << "\n";
     }
     
     std::cout << "\nTotal: " << storage->measurementSize() << " measurements\n";

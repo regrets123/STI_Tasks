@@ -2,6 +2,9 @@
 #include <cmath>
 #include <iostream>
 #include <string>
+#include <vector>
+#include <sstream>
+#include "Sensor.h"
 
 
 int Utils:: getValidInput(int min, int max) {

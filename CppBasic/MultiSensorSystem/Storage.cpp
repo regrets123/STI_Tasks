@@ -30,16 +30,17 @@ bool Storage::saveToFile(const std::string& filename) const {
     if (!file.is_open()) {
         return false;
     }
-
-    for (const auto& m : *measurementData) {
+    file << "Time,Type,Value,Unit,Name\n";
+    for (const auto& measurement : *measurementData) {
         char timeBuffer[20];
-        struct tm* timeInfo = localtime(&m.time);
-        strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M", timeInfo);
+        std::strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M",
+                      std::localtime(&measurement.time));
 
-        file << timeBuffer << ", "
-             << m.name << ", "
-             << std::fixed << std::setprecision(1) << m.value << ", "
-             << Utils::getUnitString(m.type) << "\n";
+        file << timeBuffer << ","
+             << Utils::sensorTypeToString(measurement.type) << ","
+             << measurement.value << ","
+             << Utils::getUnitString(measurement.type) << ","
+             << measurement.name << "\n";
     }
     file.close();
     return true;

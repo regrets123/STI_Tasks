@@ -10,7 +10,7 @@ void InitiateSensors(std::vector<std::shared_ptr<Sensor>>* sensors) {
             sensors->push_back(newSensor);
         }
         else {
-            auto newSensor = std::make_shared<Sensor>(humidity, "MoistSensor" + std::to_string(i-2), 0.1f, 0.95f);
+            auto newSensor = std::make_shared<Sensor>(humidity, "MoistSensor" + std::to_string(i-2), 1.f, 99.f);
             sensors->push_back(newSensor);
         }
     }
