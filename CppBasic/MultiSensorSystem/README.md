@@ -25,7 +25,7 @@ README.md                 # Denna fil
 
 ## ⚙️ Installation och körning
 
-### Klona repositoryt:
+### Klona repository:
 ```bash
 git https://github.com/regrets123/STI_Tasks/tree/main/CppBasic
 cd MultiSensorSystem/
@@ -38,36 +38,24 @@ Programmet main är i CppBasic.cpp i root.
 Programmet visar en meny i terminalen:
 
 ```
-Welcome to Saturn's moons Dione's Deep Ice Thermostat module.
-Please input the corresponding option:
-Input: 1 to calculate and display the current data.
-Input: 2 to input new Data to the system.
-Input: 3 to generate mock data.
-Input: 4 to check for a specific temperature.
-Input: 5 to check the data at a specific date.
-Input: 6 to sort the data.
-Input: 7 to Save the readings.
-Input: 8 to Load previous readings.
-Input: 9 to exit the module.
+========================================
+       SENSOR MANAGEMENT SYSTEM
+========================================
+1. Read new measurements from all sensors
+2. Show statistics per sensor
+3. Show all measurements
+4. Save all measurements to file
+5. Load measurements from file
+6. Exit program
+========================================
+Choose an option (1-6):
 
 ```
 🧱 Tekniska val och motivering
 
-Jag delade upp programmet i en överordnande kontroller för att hantera flödet av logiken.
-En DataCollector klass för att hantera inmatning och en DataAnalyser klass för att analysera datan.
-
-Jag använde Std:Map då datan ska sorteras, och den alltså sorteras automatiskt vid inmatning.
-Map är fylld med std::pairs av std::time_t och float, där time_t representerar tidpunkten när mätningen gjordes och float representerar temperaturen i Celsius.
-För att kunna sortera datan inte bara via KEY utan även value har jag en std::vektor buffer som jag återanvänder.
-Jag använder time_t för att map själv ska kunna sortera den då den är en long long, och konverterar till annat format för att printa ut datumet i en mer läsbar form.
-Vid data-analysering använder jag en Results struct då det blir för många variabler att skicka mellan funktioner.
-Många metoder ska bara läsa datan och inte skriva in ny data, tex via dataanalyserings scriptet, då är de const.
-
-Jag kontrollerar att inmatningen bara är siffror via Static GetValidNumber() och har ytterligare verifiering via GetValidYear() GetValidMonth() och GetValidDay().
-Där kontrolleras med instruktioner att det är före 1970, innan nuvarande datum, och tar hänsyn för skottår kring februari för antal dagar i månaden.
-Har lagt till Spara och Inläsning från csv fil som en provisorisk databas. Ursprungligen gjorde jag det som binär fil men det var inte inkluderat i uppgiftsbeskrivningen så skrev om det.
-Jag hanterar inte tomma listor eller filfel, men har inte fått några errors när jag testat med tom lista.
-Försökt använda pointers så mycket som möjligt för att koden ska vara så snabb som möjligt.
+Jag delade upp programmet i Storage, Sensor och UserInterface samt structs för measurement och statistics. Lite extra funktionalitet ligger även i utils.h.
+Jag separerar Sensortyperna via enum som översätts i Utils till strängar eller ints. Storage hanterar datahantering och mattematik samt save och load.
+UserInterface hanterar lättare logik och print(cout). CppBasic är 
 
 ## 📊 Funktionalitet
 
@@ -80,7 +68,8 @@ Har ni flera frågor kring funktion är ni välkomna att maila mig på lotus.sax
 Kort beskriv hur du testat programmet:
 
 Jag har iterativt testat samtliga funktioner i programmet vid implementerings tid och vid förändringar.
-Jag har testat upp till 100 genererade inmatningar och över 10 manuella utan problem, både med automatisk tidsgenerering och manuell tidsgenering.
+Jag har testat att läsa, spara, ladda och ladda igen. Starta om och ladda gammal data. 
 
 💡 Utmaningar och lärdomar
-Lärt mig om const och mutable, samt lite mer om templates och konstruktorer. I övrigt kunde jag det mesta sedan tidigare.
+Största utmaningen var att det blev för mycket matte och logik i user interface klassen så fick refakturera den mer.
+Skulle vilja vara mer strikt i framtiden så UserInterface bara tar emot structs eller strängar och printar dem. 
