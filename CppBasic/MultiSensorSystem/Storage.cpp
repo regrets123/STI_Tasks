@@ -57,7 +57,6 @@ bool Storage::loadFromFile(const std::string &filename) {
         std::stringstream ss(line);
         std::string dateStr, sensorName, valueStr, unit;
 
-        // Parse: 2025-10-28 09:15, Temperature, 22.5, °C
         if (std::getline(ss, dateStr, ',') &&
             std::getline(ss, sensorName, ',') &&
             std::getline(ss, valueStr, ',') &&
@@ -81,7 +80,7 @@ bool Storage::loadFromFile(const std::string &filename) {
                     tm.tm_hour = hour;
                     tm.tm_min = minute;
                     tm.tm_sec = 0;
-                    tm.tm_isdst = -1; // Let mktime determine DST
+                    tm.tm_isdst = -1;
                     time_t timestamp = std::mktime(&tm);
 
                     auto type = static_cast<SensorType>(Utils::stringToSensorType(sensorName));

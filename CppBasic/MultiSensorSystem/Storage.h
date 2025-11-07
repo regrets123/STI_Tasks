@@ -11,23 +11,18 @@ public:
         : measurementData(data),
           sensors(sensors) {
     }
+    static Statistics calculateStatistics (const std::vector<Measurement>* dataToProcess);
 
     std::vector<Measurement> addMeasurements();
-    void analyseData() const;
-    bool saveToFile(const std::string& filename) const;
-    bool loadFromFile(const std::string& filename);
-
-    static Statistics calculateStatistics (const std::vector<Measurement>* dataToProcess);
-    // Get all measurements (const reference for safety)
-    const std::vector<Measurement>& getAllMeasurements() const;
     std::vector<Measurement> GetMeasuermentByType(SensorType type);
+    void analyseData() const;
+    bool loadFromFile(const std::string& filename);
+    bool saveToFile(const std::string& filename) const;
 
-    // Check if storage is empty
-    bool isEmpty() const;
-
-    // Get count
-    size_t measurementSize() const;
-    size_t numberOfSensors() const;
+    [[nodiscard]] const std::vector<Measurement>& getAllMeasurements() const;
+    [[nodiscard]] bool isEmpty() const;
+    [[nodiscard]] size_t measurementSize() const;
+    [[nodiscard]] size_t numberOfSensors() const;
 
 private:
     std::vector<Measurement>* measurementData;
