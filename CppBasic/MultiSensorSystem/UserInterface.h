@@ -1,10 +1,6 @@
-//
-// Created by hula_ on 2025-11-03.
-//
+#pragma once
 
-#ifndef STI_TASKS_USERINTERFACE_H
-#define STI_TASKS_USERINTERFACE_H
-#include "Sensor.h"
+#include "Sensors/Sensor.h"
 
 struct Statistics;
 class Storage;
@@ -28,6 +24,3 @@ private:
 
     Storage* storage;
 };
-
-
-#endif //STI_TASKS_USERINTERFACE_H

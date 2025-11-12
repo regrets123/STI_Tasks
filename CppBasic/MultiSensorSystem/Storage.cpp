@@ -102,7 +102,7 @@ Statistics Storage::calculateStatistics(const std::vector<Measurement> *dataToPr
         return {0, 0.0f, 0.0f, 0.0f, 0.0f};
     }
 
-    auto size = static_cast<uint8_t>(dataToProcess->size());
+    int size = static_cast<int>(dataToProcess->size());
     float sum = 0.0f;
     float minValue = dataToProcess->at(0).value;
     float maxValue = dataToProcess->at(0).value;

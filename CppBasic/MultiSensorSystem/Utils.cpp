@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
-#include "Sensor.h"
+#include "Sensors/Sensor.h"
 
 
 int Utils:: getValidInput(int min, int max) {

@@ -1,6 +1,4 @@
-
-#include "Sensor.h"
-
+#include "../Sensors/Sensor.h"
 #include <random>
 
 Sensor::Sensor(SensorType type, const std::string& name, float minRange, float maxRange)

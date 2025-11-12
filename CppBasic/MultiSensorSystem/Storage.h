@@ -1,5 +1,5 @@
-#ifndef STI_TASKS_STORAGE_H
-#define STI_TASKS_STORAGE_H
+#pragma once
+
 #include <memory>
 #include <vector>
 #include <string>
@@ -28,5 +28,3 @@ private:
     std::vector<Measurement>* measurementData;
     std::vector<std::shared_ptr<Sensor>>* sensors;
 };
-
-#endif //STI_TASKS_STORAGE_H

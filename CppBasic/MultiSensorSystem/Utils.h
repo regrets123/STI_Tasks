@@ -1,6 +1,5 @@
+#pragma once
 
-#ifndef STI_TASKS_UTILS_H
-#define STI_TASKS_UTILS_H
 #include <string>
 #include <vector>
 
@@ -14,6 +13,3 @@ public:
     static std::string getUnitString(int type);
     static void clearInputBuffer();
 };
-
-
-#endif //STI_TASKS_UTILS_H

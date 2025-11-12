@@ -1,17 +1,20 @@
+#pragma once
+
 #include "UserInterface.h"
 #include "Storage.h"
 #include <vector>
 #include <memory>
+#include "Sensors/HumiditySensor.h"
+#include "Sensors/TemperatureSensor.h"
 
-void InitiateSensors(std::vector<std::shared_ptr<Sensor>>* sensors) {
+
+void InitiateSensors(std::vector<std::unique_ptr<Sensor>>* sensors) {
     for (int i = 0; i < 4; i++) {
         if (i < 2) {
-            auto newSensor = std::make_shared<Sensor>(celsius, "Thermostat" + std::to_string(i), -25.f, 60.f);
-            sensors->push_back(newSensor);
+            sensors->emplace_back(std::make_unique<TemperatureSensor>(celsius, "Thermostat" + std::to_string(i), -25.f, 60.f));
         }
         else {
-            auto newSensor = std::make_shared<Sensor>(humidity, "MoistSensor" + std::to_string(i-2), 1.f, 99.f);
-            sensors->push_back(newSensor);
+            sensors->emplace_back(std::make_unique<HumiditySensor>(humidity, "MoistSensor" + std::to_string(i-2), 1.f, 99.f));
         }
     }
 }
@@ -19,7 +22,7 @@ void InitiateSensors(std::vector<std::shared_ptr<Sensor>>* sensors) {
 int main() {
 
     std::vector<Measurement> data;
-    std::vector<std::shared_ptr<Sensor>> sensors;
+    std::vector<std::unique_ptr<Sensor>> sensors;
     Storage storage = Storage(&data, &sensors);
     InitiateSensors(&sensors);
     const UserInterface ui(&storage);
