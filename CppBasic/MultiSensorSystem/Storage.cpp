@@ -7,7 +7,7 @@
 #include "Utils.h"
 #include "Storage.h"
 
-std::vector<Measurement> Storage::addMeasurements() {
+std::vector<Measurement> Storage::addMeasurements() const {
     std::vector<Measurement> measurements;
     for (const auto& sensor: *sensors) {
         Measurement newReading (sensor->getType()
@@ -18,10 +18,6 @@ std::vector<Measurement> Storage::addMeasurements() {
         measurements.push_back(newReading);
     }
     return measurements;
-}
-
-void Storage::analyseData() const {
-
 }
 
 bool Storage::saveToFile(const std::string& filename) const {
@@ -135,7 +131,7 @@ const std::vector<Measurement>& Storage::getAllMeasurements() const {
     return *measurementData;
 }
 
-std::vector<Measurement> Storage::GetMeasuermentByType(SensorType type) {
+std::vector<Measurement> Storage::GetMeasurementByType(SensorType type) {
     std::vector<Measurement> filteredMeasurements;
     filteredMeasurements.clear();
     for (const auto& measurement : *measurementData) {

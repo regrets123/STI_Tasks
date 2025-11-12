@@ -23,7 +23,7 @@ void UserInterface::run() const {
                 std::cout << "\nStatistics per sensor\n";
                 std::cout << "Input 1 for Celsius, 2 for Humidity. \n";
                 auto type = static_cast<SensorType>(Utils::getValidInput(1,2));
-                std::vector<Measurement> measurements = storage->GetMeasuermentByType(type);
+                std::vector<Measurement> measurements = storage->GetMeasurementByType(type);
                 Statistics newData = Storage::calculateStatistics(&measurements);
                 showStatisticsPerSensor(type, newData);
                 break;

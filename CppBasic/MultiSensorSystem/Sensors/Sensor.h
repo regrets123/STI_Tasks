@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "Point3D.h"
 
 enum SensorType { none, celsius, humidity, velocity, maxNum};
 
@@ -9,12 +10,14 @@ public:
      virtual ~Sensor() = default;
 
      Sensor(SensorType type, const std::string& name, float minRange, float maxRange);
-     [[nodiscard]] virtual float read() const; //compiler yells if the return variable isn't used.
+     [[nodiscard]] virtual double read() const = 0;
      [[nodiscard]] virtual std::string getName() { return name;}
      [[nodiscard]] virtual SensorType getType() const;
-private:
+     [[nodiscard]] virtual Point3D getMoreData() const;
+protected:
      std::string name;
      SensorType type = none;
      float minRange = -1000;
      float maxRange = 1000;
+     double generateRandom() const;
 };

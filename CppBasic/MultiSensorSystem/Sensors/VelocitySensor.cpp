@@ -1,6 +1,10 @@
 
 #include "../Sensors/VelocitySensor.h"
 
-float VelocitySensor::read() const {
-    return Sensor::read();
+double VelocitySensor::read() const {
+    return velocity.length();
+}
+
+Point3D VelocitySensor::getDirection() const {
+   return velocity;
 }

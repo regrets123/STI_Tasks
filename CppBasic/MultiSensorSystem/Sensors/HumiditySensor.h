@@ -6,5 +6,5 @@ public:
     HumiditySensor(SensorType type, const std::string &name, float minRange, float maxRange)
         : Sensor(type, name, minRange, maxRange) {
     }
-    [[nodiscard]] float read() const override;
+    [[nodiscard]] double read() const override;
 };

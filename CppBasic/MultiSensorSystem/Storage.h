@@ -7,17 +7,17 @@
 
 class Storage {
 public:
-    Storage(std::vector<Measurement> *data, std::vector<std::shared_ptr<Sensor>> *sensors)
+    Storage(std::vector<Measurement> *data, std::vector<std::unique_ptr<Sensor>> *sensors)
         : measurementData(data),
           sensors(sensors) {
     }
     static Statistics calculateStatistics (const std::vector<Measurement>* dataToProcess);
 
-    std::vector<Measurement> addMeasurements();
-    std::vector<Measurement> GetMeasuermentByType(SensorType type);
-    void analyseData() const;
+    std::vector<Measurement> GetMeasurementByType(SensorType type);
+    [[nodiscard]] std::vector<Measurement> addMeasurements() const;
+
     bool loadFromFile(const std::string& filename);
-    bool saveToFile(const std::string& filename) const;
+    [[nodiscard]] bool saveToFile(const std::string& filename) const;
 
     [[nodiscard]] const std::vector<Measurement>& getAllMeasurements() const;
     [[nodiscard]] bool isEmpty() const;
@@ -26,5 +26,5 @@ public:
 
 private:
     std::vector<Measurement>* measurementData;
-    std::vector<std::shared_ptr<Sensor>>* sensors;
+    std::vector<std::unique_ptr<Sensor>>* sensors;
 };

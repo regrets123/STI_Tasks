@@ -1,7 +1,9 @@
 #pragma once
 
+#include <ctime>
 #include <string>
-#include "Sensors/Sensor.h"
+#include <Sensors/Sensor.h>
+
 
 struct Statistics {
     int size;
@@ -17,10 +19,11 @@ struct Statistics {
 };
 
 struct Measurement {
-    SensorType type;
+    SensorType type{};
     float value;
     std::string name;
     time_t  time;
     Measurement(SensorType type, float value, const std::string& name, time_t time)
            : type(type), value(value), name(name), time(time) {}
 };
+

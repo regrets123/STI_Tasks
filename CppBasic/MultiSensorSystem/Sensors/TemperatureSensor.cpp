@@ -1,6 +1,5 @@
-
 #include "../Sensors/TemperatureSensor.h"
 
-float TemperatureSensor::read() const {
-    return Sensor::read();
+double TemperatureSensor::read() const {
+    return generateRandom();
 }

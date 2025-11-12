@@ -1,6 +1,7 @@
 #include "Utils.h"
 #include <cmath>
 #include <iostream>
+#include <limits>
 #include <string>
 #include <vector>
 #include <sstream>
@@ -43,10 +44,15 @@ int Utils:: getValidInput(int min, int max) {
 
 std::string Utils::sensorTypeToString(int type)  {
     switch (type) {
-        case static_cast<int>(celsius):
+        case static_cast<int>(celsius): {
             return "Temperature";
-        case static_cast<int>(humidity):
+        }
+        case static_cast<int>(humidity): {
             return "Humidity";
+        }
+        case static_cast<int>(velocity): {
+            return "Velocity";
+        }
         default:
             return "Unknown";
     }
@@ -64,10 +70,16 @@ int Utils::stringToSensorType(const std::string& typeStr) {
 
 std::string Utils::getUnitString(int type) {
     switch (type) {
-        case static_cast<int>(celsius):
+        case static_cast<int>(celsius): {
             return "Celsius";
-        case static_cast<int>(humidity):
+        }
+        case static_cast<int>(humidity): {
             return "%";
+        }
+        case static_cast<int>(velocity): {
+             return "V";
+        }
+        default: ;
     }
 }
 
