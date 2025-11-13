@@ -20,9 +20,10 @@ struct Statistics {
 
 struct Measurement {
     SensorType type{};
-    float value;
+    double value;
     std::string name;
     time_t  time;
+    Point3D position;
     Measurement(SensorType type, float value, const std::string& name, time_t time)
            : type(type), value(value), name(name), time(time) {}
 };

@@ -65,6 +65,8 @@ int Utils::stringToSensorType(const std::string& typeStr) {
     if (typeStr == "Humidity") {
         return humidity;
     }
+    if (typeStr == "Velocity")
+        return velocity;
     return none;
 }
 
@@ -79,7 +81,9 @@ std::string Utils::getUnitString(int type) {
         case static_cast<int>(velocity): {
              return "V";
         }
-        default: ;
+        default: {
+            return "Error";
+        }
     }
 }
 

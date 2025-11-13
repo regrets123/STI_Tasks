@@ -14,6 +14,10 @@ std::vector<Measurement> Storage::addMeasurements() const {
             ,sensor->read()
             ,sensor->getName()
             , std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
+        if (sensor->getType() == velocity) {
+            newReading.position = sensor->getMoreData();
+
+        }
         measurementData->push_back(newReading);
         measurements.push_back(newReading);
     }
@@ -26,7 +30,7 @@ bool Storage::saveToFile(const std::string& filename) const {
     if (!file.is_open()) {
         return false;
     }
-    file << "Time,Type,Value,Unit,Name\n";
+    file << "Time,Type,Value,Name\n";
     for (const auto& measurement : *measurementData) {
         char timeBuffer[20];
         std::strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M",
@@ -35,7 +39,6 @@ bool Storage::saveToFile(const std::string& filename) const {
         file << timeBuffer << ","
              << Utils::sensorTypeToString(measurement.type) << ","
              << measurement.value << ","
-             << Utils::getUnitString(measurement.type) << ","
              << measurement.name << "\n";
     }
     file.close();
@@ -49,20 +52,26 @@ bool Storage::loadFromFile(const std::string &filename) {
     }
     int loadedCount = 0;
     std::string line;
+
+    if (std::getline(file, line)) {
+        if (line != "Time,Type,Value,Unit,Name") {
+            file.seekg(0); // Reset to beginning
+        }
+    }
+
     while (std::getline(file, line)) {
         std::stringstream ss(line);
-        std::string dateStr, sensorName, valueStr, unit;
+        std::string dateStr, typeStr, valueStr, name;
 
         if (std::getline(ss, dateStr, ',') &&
-            std::getline(ss, sensorName, ',') &&
+            std::getline(ss, typeStr, ',') &&
             std::getline(ss, valueStr, ',') &&
-            std::getline(ss, unit, ',')) {
-            dateStr.erase(0, dateStr.find_first_not_of(" \t"));
-            dateStr.erase(dateStr.find_last_not_of(" \t") + 1);
-            sensorName.erase(0, sensorName.find_first_not_of(" \t"));
-            sensorName.erase(sensorName.find_last_not_of(" \t") + 1);
-            valueStr.erase(0, valueStr.find_first_not_of(" \t"));
-            valueStr.erase(valueStr.find_last_not_of(" \t") + 1);
+            std::getline(ss, name, ',')) {
+            dateStr = trim(dateStr);
+            typeStr = trim(typeStr);
+            valueStr = trim(valueStr);
+            name = trim(name);
+
             try {
                 float value = std::stof(valueStr);
                 std::tm tm = {};
@@ -70,8 +79,8 @@ bool Storage::loadFromFile(const std::string &filename) {
 
                 if (sscanf(dateStr.c_str(), "%d-%d-%d %d:%d",
                            &year, &month, &day, &hour, &minute) == 5) {
-                    tm.tm_year = year - 1900; // Years since 1900
-                    tm.tm_mon = month - 1; // Months since January (0-11)
+                    tm.tm_year = year - 1900;
+                    tm.tm_mon = month - 1;
                     tm.tm_mday = day;
                     tm.tm_hour = hour;
                     tm.tm_min = minute;
@@ -79,8 +88,8 @@ bool Storage::loadFromFile(const std::string &filename) {
                     tm.tm_isdst = -1;
                     time_t timestamp = std::mktime(&tm);
 
-                    auto type = static_cast<SensorType>(Utils::stringToSensorType(sensorName));
-                    Measurement m = Measurement(type, value, sensorName, timestamp);
+                    auto type = static_cast<SensorType>(Utils::stringToSensorType(typeStr));
+                    Measurement m = Measurement(type, value, name, timestamp);
                     measurementData->push_back(m);
                     loadedCount++;
                 }
@@ -91,6 +100,15 @@ bool Storage::loadFromFile(const std::string &filename) {
     }
     file.close();
     return loadedCount > 0;
+}
+
+std::string Storage::trim(const std::string& str) {
+    size_t first = str.find_first_not_of(" \t\n\r");
+    if (first == std::string::npos) {
+        return "";
+    }
+    size_t last = str.find_last_not_of(" \t\n\r");
+    return str.substr(first, (last - first + 1));
 }
 
 Statistics Storage::calculateStatistics(const std::vector<Measurement> *dataToProcess) {

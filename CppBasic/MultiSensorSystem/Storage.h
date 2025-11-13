@@ -17,6 +17,9 @@ public:
     [[nodiscard]] std::vector<Measurement> addMeasurements() const;
 
     bool loadFromFile(const std::string& filename);
+
+    std::string trim(const std::string &str);
+
     [[nodiscard]] bool saveToFile(const std::string& filename) const;
 
     [[nodiscard]] const std::vector<Measurement>& getAllMeasurements() const;
