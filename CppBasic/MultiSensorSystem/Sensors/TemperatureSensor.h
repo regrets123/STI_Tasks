@@ -8,4 +8,6 @@ public:
         : Sensor(type, name, minRange, maxRange) {
     }
     double read() const override;
+private:
+    Point3D lastPosition;
 };
