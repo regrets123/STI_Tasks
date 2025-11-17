@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 #include "Utils.h"
-#include "VelocitySensor.h"
+#include "Sensors/VelocitySensor.h"
 #include "Sensors/HumiditySensor.h"
 #include "Sensors/TemperatureSensor.h"
 
