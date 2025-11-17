@@ -3,8 +3,8 @@
 #include "Utils.h"
 
 VelocitySensor::VelocitySensor(const Point3D& dir, const Point3D& startPos, 
-                               float minSpeed, float maxSpeed, const std::string& name)
-    : Sensor(velocity, name, minSpeed, maxSpeed),
+                               float minSpeed, float maxSpeed, const std::string& name, Threshold threshold)
+    : Sensor(velocity, name, minSpeed, maxSpeed, threshold),
       direction(dir.normalized()),
       startPosition(startPos),
       currentSpeed(0.0),

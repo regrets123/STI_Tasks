@@ -1,7 +1,11 @@
 
 #include "Threshold.h"
 
-bool Threshold::IsThresholdTriggered(float value) {
+void Threshold::ToggleAlarm(bool isOn) {
+    isActive = isOn;
+}
+
+bool Threshold::IsThresholdTriggered(double value) const {
     if (isBelow) {
         return value < threshold;
     }

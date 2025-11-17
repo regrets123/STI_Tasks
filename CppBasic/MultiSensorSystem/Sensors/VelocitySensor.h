@@ -7,7 +7,7 @@
 class VelocitySensor final : public Sensor {
 public:
     VelocitySensor(const Point3D& direction, const Point3D& startPosition,
-                   float minSpeed, float maxSpeed, const std::string& name = "VelocitySensor");
+                   float minSpeed, float maxSpeed, const std::string& name, Threshold threshold);
 
     double read() const override;
     Point3D getMoreData() const override;

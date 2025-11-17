@@ -30,4 +30,6 @@ public:
 private:
     std::vector<Measurement>* measurementData;
     std::vector<std::unique_ptr<Sensor>>* sensors;
+    std::vector<Threshold> activeThresholds;
+    std::vector<Threshold> triggeredAlarms;
 };
