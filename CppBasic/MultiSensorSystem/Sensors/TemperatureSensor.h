@@ -4,8 +4,8 @@
 
 class TemperatureSensor final : public Sensor {
 public:
-    TemperatureSensor(SensorType type, const std::string &name, float minRange, float maxRange)
-        : Sensor(type, name, minRange, maxRange) {
+    TemperatureSensor(const std::string &name, float minRange, float maxRange)
+        : Sensor(celsius, name, minRange, maxRange) {
     }
     double read() const override;
 private:

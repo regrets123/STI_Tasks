@@ -76,13 +76,14 @@ void UserInterface::readNewMeasurements() const {
     const std::vector<Measurement> newMeasurements = storage->addMeasurements();
     for (const auto& measurement : newMeasurements) {
         char timeBuffer[20];
+        std::string moreData = (measurement.type == velocity) ? +". Position:" +measurement.position.toString() : "";
         std::strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M",
                       std::localtime(&measurement.time));
 
-        std::cout << timeBuffer << ", "
-                  << Utils::sensorTypeToString(measurement.type) << ", "
-                  << measurement.value << ", "
-                  << Utils::getUnitString(measurement.type) << "\n";
+        std::cout << timeBuffer << " "
+                  << Utils::sensorTypeToString(measurement.type) << " "
+                  << measurement.value << " "
+                  << Utils::getUnitString(measurement.type) << moreData << "\n";
     }
 }
 
@@ -108,17 +109,19 @@ void UserInterface::showAllMeasurements() const {
     std::cout << std::left << std::setw(20) << "Date/Time" 
               << std::setw(20) << "Sensor" 
               << std::setw(10) << "Value" 
-              << std::setw(8) << "Unit" << "\n";
-    std::cout << std::string(58, '-') << "\n";
+              << std::setw(20) << "Unit"
+              << std::setw(20) <<"AdditionalData" <<"\n";
+    std::cout << std::string(90, '-') << "\n";
     for (const auto& m : measurements) {
         char timeBuffer[20];
         struct tm* timeInfo = localtime(&m.time);
         strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M", timeInfo);
-        
+        std::string additionalData = (m.type == velocity) ? +".   Position:" +m.position.toString() : "";
         std::cout << std::left << std::setw(20) << timeBuffer
                   << std::setw(20) << m.name
                   << std::setw(10) << std::fixed << std::setprecision(1) << m.value
-                  << std::setw(8) << Utils::getUnitString(m.type) << "\n";
+                  << std::setw(10) << Utils::getUnitString(m.type)
+                  << std::setw(10) << additionalData << "\n";
     }
     
     std::cout << "\nTotal: " << storage->measurementSize() << " measurements\n";

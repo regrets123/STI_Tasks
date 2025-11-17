@@ -30,7 +30,7 @@ bool Storage::saveToFile(const std::string& filename) const {
     if (!file.is_open()) {
         return false;
     }
-    file << "Time,Type,Value,Name\n";
+    file << "Time,Type,Value, MoreData,Name\n";
     for (const auto& measurement : *measurementData) {
         char timeBuffer[20];
         std::strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M",
@@ -39,6 +39,7 @@ bool Storage::saveToFile(const std::string& filename) const {
         file << timeBuffer << ","
              << Utils::sensorTypeToString(measurement.type) << ","
              << measurement.value << ","
+             << measurement.position.toString() << ","
              << measurement.name << "\n";
     }
     file.close();
@@ -52,24 +53,25 @@ bool Storage::loadFromFile(const std::string &filename) {
     }
     int loadedCount = 0;
     std::string line;
-
     if (std::getline(file, line)) {
-        if (line != "Time,Type,Value,Unit,Name") {
+        if (line != "Time,Type,Value, MoreData,Unit,Name") {
             file.seekg(0); // Reset to beginning
         }
     }
 
     while (std::getline(file, line)) {
         std::stringstream ss(line);
-        std::string dateStr, typeStr, valueStr, name;
+        std::string dateStr, typeStr, valueStr, MoreData, name;
 
         if (std::getline(ss, dateStr, ',') &&
             std::getline(ss, typeStr, ',') &&
             std::getline(ss, valueStr, ',') &&
+            std::getline(ss, MoreData,',') &&
             std::getline(ss, name, ',')) {
             dateStr = trim(dateStr);
             typeStr = trim(typeStr);
             valueStr = trim(valueStr);
+            MoreData = trim(valueStr);
             name = trim(name);
 
             try {
@@ -90,6 +92,9 @@ bool Storage::loadFromFile(const std::string &filename) {
 
                     auto type = static_cast<SensorType>(Utils::stringToSensorType(typeStr));
                     Measurement m = Measurement(type, value, name, timestamp);
+                    if (m.type == velocity) {
+                        m.position = Point3D::fromString(MoreData);
+                    }
                     measurementData->push_back(m);
                     loadedCount++;
                 }

@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iostream>
 #include <limits>
+#include <random>
 #include <string>
 #include <vector>
 #include <sstream>
@@ -70,6 +71,14 @@ int Utils::stringToSensorType(const std::string& typeStr) {
     return none;
 }
 
+double Utils::generateRandom(const float min, const float max) {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(min, max);
+    return dis(gen);
+
+}
+
 std::string Utils::getUnitString(int type) {
     switch (type) {
         case static_cast<int>(celsius): {
@@ -79,7 +88,7 @@ std::string Utils::getUnitString(int type) {
             return "%";
         }
         case static_cast<int>(velocity): {
-             return "V";
+             return "meters traveled";
         }
         default: {
             return "Error";
@@ -110,7 +119,5 @@ float Utils::calculateStdDev(const std::vector<float>& values, float mean) {
         float diff = value - mean;
         sumSquaredDiff += diff * diff;
     }
-
-    // Sample standard deviation (n-1)
     return std::sqrt(sumSquaredDiff / (values.size() - 1));
 }

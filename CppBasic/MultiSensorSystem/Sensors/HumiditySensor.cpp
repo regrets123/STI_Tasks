@@ -1,5 +1,6 @@
 #include "../Sensors/HumiditySensor.h"
+#include "Utils.h"
 
 double HumiditySensor::read() const {
-    return generateRandom();
+    return Utils::generateRandom(minRange, maxRange);
 }

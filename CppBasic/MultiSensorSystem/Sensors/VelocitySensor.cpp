@@ -1,26 +1,26 @@
 #include "../Sensors/VelocitySensor.h"
 
+#include "Utils.h"
+
 VelocitySensor::VelocitySensor(const Point3D& dir, const Point3D& startPos, 
                                float minSpeed, float maxSpeed, const std::string& name)
     : Sensor(velocity, name, minSpeed, maxSpeed),
       direction(dir.normalized()),
       startPosition(startPos),
       currentSpeed(0.0),
-      distanceTraveled(0, 0, 0),
+      currentPosition(0, 0, 0),
       creationTime(std::chrono::steady_clock::now()),
       lastUpdate(creationTime){
-    currentSpeed = generateRandom();
+    currentSpeed = Utils::generateRandom(minSpeed, maxSpeed);
 }
 
 double VelocitySensor::read() const {
     updateDistance();
-    currentSpeed = generateRandom();
-    return currentSpeed;
+    return (currentPosition - startPosition).length();;
 }
 
 Point3D VelocitySensor::getMoreData() const {
-    updateDistance();
-    return distanceTraveled;
+    return currentPosition;
 }
 
 void VelocitySensor::updateDistance() const {
@@ -30,7 +30,7 @@ void VelocitySensor::updateDistance() const {
     
     if (deltaTime > 0) {
         Point3D deltaDistance = direction * (currentSpeed * deltaTime);
-        distanceTraveled = distanceTraveled + deltaDistance;
+        currentPosition = currentPosition + deltaDistance;
         lastUpdate = now;
     }
 }

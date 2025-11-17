@@ -1,5 +1,6 @@
 #include "../Sensors/TemperatureSensor.h"
+#include "Utils.h"
 
 double TemperatureSensor::read() const {
-    return generateRandom();
+    return Utils::generateRandom(minRange, maxRange);
 }

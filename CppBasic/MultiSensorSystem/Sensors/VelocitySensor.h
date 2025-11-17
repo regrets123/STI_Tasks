@@ -9,14 +9,14 @@ public:
     VelocitySensor(const Point3D& direction, const Point3D& startPosition,
                    float minSpeed, float maxSpeed, const std::string& name = "VelocitySensor");
 
-    double read() const override;  // Returns current speed
-    Point3D getMoreData() const override;  // Returns distance traveled as vector
+    double read() const override;
+    Point3D getMoreData() const override;
 
 private:
     Point3D direction;
     Point3D startPosition;
     mutable double currentSpeed;  // Current speed (mutable for updating in const methods)
-    mutable Point3D distanceTraveled;
+    mutable Point3D currentPosition;
     mutable std::chrono::steady_clock::time_point lastUpdate;
     std::chrono::steady_clock::time_point creationTime;
 

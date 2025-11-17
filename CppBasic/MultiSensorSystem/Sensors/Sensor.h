@@ -19,5 +19,4 @@ protected:
      SensorType type = none;
      float minRange = -1000;
      float maxRange = 1000;
-     [[nodiscard]] double generateRandom() const;
 };

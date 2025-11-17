@@ -12,4 +12,5 @@ public:
     static int stringToSensorType(const std::string& typeStr);
     static std::string getUnitString(int type);
     static void clearInputBuffer();
+    [[nodiscard]] static double generateRandom(float min, float max);
 };
