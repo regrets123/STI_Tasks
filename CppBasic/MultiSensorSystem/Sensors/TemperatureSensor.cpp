@@ -3,7 +3,7 @@
 
 double TemperatureSensor::read() const {
     double currentValue =  Utils::generateRandom(minRange, maxRange);
-    if (alarm.IsThresholdTriggered(currentValue)) {
+    if (alarm->IsThresholdTriggered(currentValue)) {
 
     }
     return currentValue;
