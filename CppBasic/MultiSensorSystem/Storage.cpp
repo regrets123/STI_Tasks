@@ -154,7 +154,11 @@ const std::vector<Measurement>& Storage::getAllMeasurements() const {
     return *measurementData;
 }
 
-std::vector<Measurement> Storage::GetMeasurementByType(SensorType type) {
+std::vector<std::shared_ptr<Threshold>> Storage::getActiveThresholds() const {
+    return *activeThresholds;
+}
+
+std::vector<Measurement> Storage::GetMeasurementByType(SensorType type) const {
     std::vector<Measurement> filteredMeasurements;
     filteredMeasurements.clear();
     for (const auto& measurement : *measurementData) {
@@ -175,4 +179,13 @@ size_t Storage::measurementSize() const {
 
 size_t Storage::numberOfSensors() const {
     return sensors->size();
+}
+
+void Storage::addTriggeredAlarm(const std::pair<time_t, std::shared_ptr<Threshold>>& pair) const {
+    if (pair.second == nullptr) return;
+    triggeredAlarms->push_back(pair);
+}
+
+std::vector<std::pair<time_t, std::shared_ptr<Threshold>>> Storage::getTriggeredAlarms() const {
+    return *triggeredAlarms;
 }

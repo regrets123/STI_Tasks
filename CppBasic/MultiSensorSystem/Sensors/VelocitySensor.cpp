@@ -1,5 +1,7 @@
 #include "../Sensors/VelocitySensor.h"
 
+#include "Storage.h"
+#include "Threshold.h"
 #include "Utils.h"
 
 VelocitySensor::VelocitySensor(const Point3D& dir, const Point3D& startPos, 
@@ -16,7 +18,13 @@ VelocitySensor::VelocitySensor(const Point3D& dir, const Point3D& startPos,
 
 double VelocitySensor::read() const {
     updateDistance();
-    return (currentPosition - startPosition).length();;
+    double currentValue = (currentPosition - startPosition).length();
+    if (alarm->isThresholdTriggered(currentValue)) {
+        auto now = std::chrono::system_clock::now();
+        time_t timestamp = std::chrono::system_clock::to_time_t(now);
+        storage->addTriggeredAlarm(std::make_pair(timestamp, alarm));
+    }
+    return currentValue;
 }
 
 Point3D VelocitySensor::getMoreData() const {

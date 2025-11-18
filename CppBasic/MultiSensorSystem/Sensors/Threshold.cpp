@@ -5,11 +5,17 @@ void Threshold::ToggleAlarm(bool isOn) {
     isActive = isOn;
 }
 
-bool Threshold::IsThresholdTriggered(double value) const {
-    if (isBelow) {
-        return value < threshold;
+bool Threshold::isThresholdTriggered(double value) {
+    if (!isActive) {
+        return false;
     }
-    else {
-        return value > threshold;
+    if (isBelow && value < threshold) {
+        savedValue = value;
+        return true;
     }
+    if (!isBelow && value > threshold) {
+        savedValue = value;
+        return true;
+    }
+    return false;
 }

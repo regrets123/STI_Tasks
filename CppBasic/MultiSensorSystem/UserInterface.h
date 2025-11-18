@@ -20,6 +20,8 @@ private:
     void showAllMeasurements() const;
     void saveMeasurementsToFile() const;
     void loadMeasurementsFromFile() const;
+    void showActiveAlarms() const;
+    void showTriggeredAlarms() const;
 
 
     Storage* storage;

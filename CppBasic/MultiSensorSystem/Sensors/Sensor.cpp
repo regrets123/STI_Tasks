@@ -1,8 +1,10 @@
 #include <utility>
 #include "Sensors/Sensor.h"
+#include <Sensors/Threshold.h>
 #include "Storage.h"
 
-Sensor::Sensor(SensorType type, std::string  name, float minRange, float maxRange, Threshold* threshold, Storage* storage)
+
+Sensor::Sensor(SensorType type, std::string  name, float minRange, float maxRange, const std::shared_ptr<Threshold> &threshold, Storage* storage)
     : alarm(threshold), name(std::move(name)), type(type), minRange(minRange), maxRange(maxRange), storage(storage) {
 
 }

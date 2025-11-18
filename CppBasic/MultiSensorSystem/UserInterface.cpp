@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <ctime>
 #include "Utils.h"
+#include "Sensors/Threshold.h"
 
 UserInterface::UserInterface(Storage* storage)
     : storage(storage) {}
@@ -14,11 +15,11 @@ void UserInterface::run() const {
     
     while (running) {
         displayMenu();
-
         switch (getMenuChoice()) {
-            case 1:
+            case 1: {
                 readNewMeasurements();
                 break;
+            }
             case 2: {
                 std::cout << "\nStatistics per sensor\n";
                 std::cout << "Input 1 for Celsius, 2 for Humidity. \n";
@@ -28,24 +29,34 @@ void UserInterface::run() const {
                 showStatisticsPerSensor(type, newData);
                 break;
             }
-
-            case 3:
+            case 3: {
                 showAllMeasurements();
                 break;
-            case 4:
+            }
+            case 4: {
                 saveMeasurementsToFile();
                 break;
-            case 5:
+            }
+            case 5: {
                 loadMeasurementsFromFile();
                 break;
-            case 6:
+            }
+            case 6: {
+                showActiveAlarms();
+                break;
+            }
+            case 7: {
+                showTriggeredAlarms();
+                break;
+            }
+            case 8: {
                 std::cout << "\nExiting program...\n";
                 running = false;
                 break;
+            }
             default:
                 std::cout << "\nInvalid choice! Please try again.\n";
         }
-        
         if (running) {
             std::cout << "\nPress Enter to continue...";
             std::cin.get();
@@ -62,13 +73,15 @@ void UserInterface::displayMenu() {
     std::cout << "3. Show all measurements\n";
     std::cout << "4. Save all measurements to file\n";
     std::cout << "5. Load measurements from file\n";
-    std::cout << "6. Exit program\n";
+    std::cout << "6. Show all Active Alarms.\n";
+    std::cout << "7. Show all Triggered Alarms.\n";
+    std::cout << "8. Exit program\n";
     std::cout << "========================================\n";
-    std::cout << "Choose an option (1-6): ";
+    std::cout << "Choose an option (1-8): ";
 }
 
 int UserInterface::getMenuChoice() {
-    return Utils::getValidInput(1, 6);
+    return Utils::getValidInput(1, 8);
 }
 
 void UserInterface::readNewMeasurements() const {
@@ -153,6 +166,29 @@ void UserInterface::loadMeasurementsFromFile() const {
         std::cout << "File successfully loaded!\n";
     else {
         std::cout << "File could not be loaded!\n";
+    }
+}
+
+void UserInterface::showActiveAlarms() const {
+    std::cout << "\nActive Alarms\n";
+    for (const auto& threshold : storage->getActiveThresholds()) {
+        std::cout << threshold->getSensorName() << ": " << "threshold " << threshold->getThreshold() << " "  << Utils::getUnitString(threshold->getType()) <<"\n";
+    }
+}
+
+void UserInterface::showTriggeredAlarms() const {
+    std::cout << "\nTriggered Alarms\n";
+    for (const auto& alarm : storage->getTriggeredAlarms()) {
+        time_t timestamp = alarm.first;
+        std::tm* timeinfo = std::localtime(&timestamp);
+        char buffer[80];
+        std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+        const auto& threshold = alarm.second;
+        std::string direction = threshold->isBelowThreshold() ? "Alarm triggerd because value went below" : "Alarm triggerd because value went above";
+        std::cout << buffer << " | "
+                  << threshold->getSensorName() << " | "
+                  << "Value: " << threshold->getLastValue() << " "
+                  << direction << " threshold " << threshold->getThreshold() << " " << Utils::getUnitString(threshold->getType()) << "\n";
     }
 }
 

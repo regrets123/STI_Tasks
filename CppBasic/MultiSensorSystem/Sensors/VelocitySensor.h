@@ -1,3 +1,4 @@
+#pragma once
 #include "Sensor.h"
 #include "Point3D.h"
 #include <chrono>
