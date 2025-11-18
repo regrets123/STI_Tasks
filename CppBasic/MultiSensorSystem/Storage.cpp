@@ -116,6 +116,25 @@ std::string Storage::trim(const std::string& str) {
     return str.substr(first, (last - first + 1));
 }
 
+void Storage::startPeriodicReading(std::chrono::milliseconds interval) {
+
+        running = true;
+        measurementThread = std::thread([this, interval]() {
+            while (running) {
+                addMeasurements();
+                std::this_thread::sleep_for(interval);
+            }
+        });
+    }
+
+void Storage::stopPeriodicReading() {
+    running = false;
+    if (measurementThread.joinable()) {
+        measurementThread.join();
+    }
+}
+
+
 Statistics Storage::calculateStatistics(const std::vector<Measurement> *dataToProcess) {
     if (dataToProcess == nullptr || dataToProcess->empty()) {
         return {0, 0.0f, 0.0f, 0.0f, 0.0f};

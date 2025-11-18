@@ -51,8 +51,10 @@ int main() {
     Storage storage(&data, &sensors, &thresholds, &triggeredAlarms);
 
     InitiateSensors(&sensors,&thresholds,&storage);
+    storage.startPeriodicReading(std::chrono::seconds(5));
     const UserInterface ui(&storage);
     ui.run();
+    storage.stopPeriodicReading();
     return 0;
 }
 
